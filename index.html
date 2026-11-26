@@ -1,0 +1,1983 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pratyush Pallav</title>
+<meta name="description" content="Pratyush Pallav works on how people come to trust and understand a robot they work alongside, and how interface design shapes that trust.">
+<meta name="theme-color" content="#e2e4e0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121316" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Pratyush Pallav · Human-robot interaction">
+<meta property="og:description" content="Trust, operator state and interface design in robot teleoperation. MSc Robotics, Cranfield University.">
+<meta property="og:image" content="photo.jpg">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23ffc21a'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-style='italic' font-size='34' text-anchor='middle' fill='%23121314'%3EPP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Pratyush Pallav","description":"Roboticist working on trust, operator state and interface design in human-robot interaction.","email":"mailto:pratyushpallav39@gmail.com","image":"photo.jpg","alumniOf":[{"@type":"CollegeOrUniversity","name":"Cranfield University"},{"@type":"CollegeOrUniversity","name":"Birla Institute of Technology, Mesra"}],"knowsAbout":["Human-robot interaction","Teleoperation","Shared autonomy","Trust in automation","Physiological sensing"],"sameAs":["https://scholar.google.com/citations?user=giTq7yYAAAAJ","https://orcid.org/0009-0005-5638-7499","https://www.linkedin.com/in/pratyush-pallav-5a3a3321b/","https://www.researchgate.net/profile/Pratyush-Pallav"]}
+</script>
+<noscript><style>#log,#vitals,#hint{display:none}</style></noscript>
+<style>
+:root{
+  --paper:#e2e4e0;
+  --paper-2:#d3d6d2;
+  --ink:#121314;
+  --mute:#53585d;
+  --rule:#b3b7ba;
+  --accent:#8f5200;
+  --hazard:#ffc21a;
+  --violet:#7c3aed;
+  --lav:#b9a6ff;
+  --red:#e5484d;
+  --col:min(620px,46vw);
+  --pad:44px;
+  --nav:52px;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121316;--paper-2:#1b1d21;--ink:#e9eaea;--mute:#9ba1a7;--rule:#3a3e44;--accent:#ffc21a;--violet:#a78bfa;
+  }
+}
+:root[data-theme="dark"]{--paper:#121316;--paper-2:#1b1d21;--ink:#e9eaea;--mute:#9ba1a7;--rule:#3a3e44;--accent:#ffc21a;--violet:#a78bfa}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper-2);color:var(--ink);font:400 16px/1.6 'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--hazard);outline-offset:2px}
+::selection{background:var(--hazard);color:#111}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.skip{position:fixed;left:12px;top:-60px;z-index:60;background:var(--ink);color:var(--paper);padding:8px 12px;font:600 12px 'IBM Plex Mono',monospace;text-decoration:none}
+.skip:focus{top:12px}
+
+/* ---------- the robot cell: a fixed layer that runs with the page scroll ---------- */
+#cell{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;display:block}
+#log{position:fixed;z-index:1;top:66px;left:calc(var(--col) + 24px);right:24px;height:136px;overflow:hidden;pointer-events:none}
+#log .row{display:flex;align-items:center;gap:12px}
+#beatCode{font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;color:#111;background:var(--hazard);padding:2px 8px;white-space:nowrap}
+#log[data-mode="B"] #beatCode{background:var(--lav)}
+.pips{display:flex;gap:4px;pointer-events:auto}
+.pips button{display:block;width:11px;height:11px;padding:0;border:1.5px solid var(--ink);background:transparent;cursor:pointer;transition:transform .15s}
+.pips button:hover{transform:scale(1.3)}
+.pips button.b{border-color:var(--violet)}
+.pips button.c{border-color:#b07d00}
+.pips button.done{background:var(--ink)}
+.pips button.b.done{background:var(--violet)}
+.pips button.c.done{background:var(--hazard)}
+.pips button.now{outline:2px solid var(--hazard);outline-offset:1px}
+#status{margin-left:auto;font:500 11px 'IBM Plex Mono',monospace;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#beatHead{font-family:'Newsreader',Georgia,serif;font-size:27px;line-height:1.08;margin-top:10px;letter-spacing:-.01em}
+#beatBody{font-size:13.5px;line-height:1.45;color:var(--mute);margin-top:6px;max-width:660px}
+#log .swap{animation:swap .5s ease}
+@keyframes swap{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#vitals{position:fixed;z-index:1;display:flex;flex-direction:column;gap:1px;font:500 11px 'IBM Plex Mono',monospace;color:var(--ink);background:var(--paper);border:1px solid var(--ink);padding:4px 9px 4px;pointer-events:none;white-space:nowrap}
+#vitals b{display:flex;align-items:center;gap:6px;font:600 9.5px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+#vitals{transition:opacity .4s}
+#vitals.off{opacity:0}
+#vitals i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:beat .77s infinite}
+@keyframes beat{0%,100%{transform:scale(1);opacity:.85}10%{transform:scale(1.5);opacity:1}24%{transform:scale(1)}}
+#hint{position:fixed;z-index:1;transform:translateX(-50%);font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:7px 12px;pointer-events:none;transition:opacity .4s}
+#hint span{display:inline-block;animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+#hint.off{opacity:0}
+
+/* finale: the study's condition means, shown when the task completes */
+#summary{position:fixed;z-index:1;background:var(--paper);border:1.5px solid var(--ink);box-shadow:8px 8px 0 var(--hazard);padding:16px 18px 14px;opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+#summary.on{opacity:1;transform:none}
+#summary.fill{display:flex;flex-direction:column;justify-content:center}
+#summary.tight{padding:11px 14px 9px}
+#summary.tight h3{font-size:20px;margin:2px 0 6px}
+#summary.tight td{padding-top:2.5px;padding-bottom:2.5px}
+#summary.tight .s-note{margin-top:5px}
+#summary.gone{display:none}
+#summary .s-k{font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}
+#summary h3{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1;margin:4px 0 10px}
+#summary table{width:100%;border-collapse:collapse;font:500 12px 'IBM Plex Mono',monospace}
+#summary th{font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);text-align:right;padding:0 0 5px 10px}
+#summary th:first-child{text-align:left;padding-left:0}
+#summary td{padding:4px 0 4px 10px;border-top:1px solid var(--rule);text-align:right;white-space:nowrap}
+#summary td:first-child{text-align:left;padding-left:0;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;white-space:normal}
+#summary td.vr{color:var(--violet)}
+#summary td.s{width:14px;color:var(--ink)}
+#summary td.s.no{color:var(--rule)}
+#summary .s-note{margin-top:8px;font:500 10.5px 'IBM Plex Mono',monospace;color:var(--mute)}
+
+/* task progress under the nav, in step with the cell */
+nav .bar{position:absolute;left:0;right:0;bottom:-1px;height:3px;pointer-events:none}
+nav .bar i{display:block;height:100%;background:var(--hazard);transform-origin:0 50%;transform:scaleX(0)}
+
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:30;height:var(--nav);background:var(--paper);border-bottom:1px solid var(--ink);display:flex;align-items:center;gap:22px;padding:0 24px}
+nav .brand{font-family:'Newsreader',Georgia,serif;font-size:20px;text-decoration:none;letter-spacing:-.01em;margin-right:auto}
+nav .brand em{font-style:italic}
+nav ul{display:flex;gap:22px;list-style:none}
+nav ul a{font:500 12px 'IBM Plex Mono',monospace;color:var(--mute);text-decoration:none;padding:5px 0;border-bottom:3px solid transparent}
+nav ul a:hover,nav ul a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--hazard)}
+.cv{font:600 12px 'IBM Plex Mono',monospace;background:var(--hazard);color:#111;text-decoration:none;padding:6px 11px}
+.cv:hover{background:var(--ink);color:var(--paper)}
+.menu-btn{display:none;background:none;border:1.5px solid var(--ink);padding:5px 10px;font:600 12px 'IBM Plex Mono',monospace;cursor:pointer}
+
+/* ---------- reading column ---------- */
+.column{position:relative;z-index:2;width:var(--col);background:var(--paper);border-right:1px solid var(--ink);min-height:100vh}
+.column,nav{background-image:var(--grain)}
+.sheet{padding:64px var(--pad);scroll-margin-top:var(--nav);border-top:1px solid var(--ink)}
+.window{display:none;pointer-events:none}
+
+.hero{padding-top:112px;border-top:0}
+.kicker{display:flex;gap:12px;align-items:center;margin-bottom:26px;font:500 12px 'IBM Plex Mono',monospace;color:var(--mute)}
+.kicker i{display:inline-block;width:22px;height:4px;background:var(--hazard);flex:none}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:clamp(58px,7.2vw,104px);line-height:.92;letter-spacing:-.03em}
+h1 .second{font-style:italic;background:linear-gradient(var(--hazard),var(--hazard)) 0 0/100% 100% no-repeat;color:#111;padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero-row{display:grid;grid-template-columns:150px 1fr;gap:26px;margin-top:36px;align-items:start}
+.photo{margin:0 12px 0 0}
+.photo .pic{position:relative;display:block}
+.photo .pic::before{content:"";position:absolute;inset:12px -12px -12px 12px;background:var(--hazard)}
+.photo img{position:relative;display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%;border:1px solid var(--ink)}
+.photo figcaption{margin-top:22px;font:500 11px 'IBM Plex Mono',monospace;color:var(--mute)}
+.lede{font-size:18.5px;line-height:1.5;font-weight:300}
+.lede strong{font-weight:500}
+.lede-2{margin-top:14px;font-size:15px;color:var(--mute)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 12.5px 'IBM Plex Mono',monospace;text-decoration:none;border:1.5px solid var(--ink);padding:8px 14px;transition:background .15s,color .15s,border-color .15s}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn.solid:hover{background:var(--hazard);border-color:var(--hazard);color:#111}
+.avail{margin-top:24px;font:500 12px 'IBM Plex Mono',monospace;display:flex;gap:10px;align-items:center}
+.avail b{width:10px;height:10px;background:var(--hazard);display:inline-block;flex:none}
+.note{margin-top:26px;font-size:13.5px;color:var(--mute);border-left:4px solid var(--hazard);padding:2px 0 2px 12px;max-width:480px}
+
+.eyebrow{display:inline-block;font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:3px 8px;margin-bottom:16px}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:clamp(40px,4.3vw,58px);line-height:1;letter-spacing:-.02em;margin-bottom:32px}
+.q{font:600 11px 'IBM Plex Mono',monospace;color:var(--accent)}
+.when{font:500 11.5px 'IBM Plex Mono',monospace;color:var(--mute)}
+
+.now{list-style:none;border-top:1px solid var(--rule)}
+.now li{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-bottom:1px solid var(--rule)}
+.now .when{padding-top:3px}
+.now p{font-size:15.5px}
+.now strong{font-weight:500}
+
+.questions{list-style:none;border-top:1px solid var(--rule)}
+.questions li{padding:22px 0;border-bottom:1px solid var(--rule)}
+.questions p{font-family:'Newsreader',Georgia,serif;font-size:23px;line-height:1.24;margin-top:6px}
+.questions small{display:block;margin-top:10px;font-size:14px;color:var(--mute)}
+.stats-h{font:600 11px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin:34px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.stats div{display:flex;flex-direction:column-reverse;justify-content:flex-end;padding:14px 12px 13px 0}
+.stats div + div{padding-left:12px;border-left:1px solid var(--rule)}
+.stats dd{font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:40px;line-height:1;letter-spacing:-.02em}
+.stats dt{font:500 10.5px/1.35 'IBM Plex Mono',monospace;color:var(--mute);margin-top:7px}
+.pillars{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:24px 28px}
+.pillar h3{font-weight:500;font-size:16px;margin:4px 0}
+.pillar p{font-size:14px;color:var(--mute)}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:-8px 0 22px}
+.filters button{font:500 11.5px 'IBM Plex Mono',monospace;background:transparent;border:1px solid var(--rule);color:var(--mute);padding:4px 10px;cursor:pointer}
+.filters button:hover{border-color:var(--ink);color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pubs{list-style:none;border-top:1px solid var(--rule)}
+.pubs li{position:relative;padding:18px 0;border-bottom:1px solid var(--rule)}
+.pubs li::before{content:"";position:absolute;left:calc(-1 * var(--pad));top:16px;bottom:16px;width:4px;background:var(--hazard);transform:scaleY(0);transform-origin:top;transition:transform .2s}
+.pubs li:hover::before{transform:scaleY(1)}
+.pubs .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.pubs h3{font-weight:500;font-size:16px;line-height:1.4}
+.pubs p{color:var(--mute);font-size:13.5px;margin-top:4px}
+.tag{font:500 10.5px 'IBM Plex Mono',monospace;border:1px solid var(--ink);padding:2px 7px;white-space:nowrap}
+.tag.live{background:var(--ink);color:var(--paper)}
+.tag.accent{background:var(--hazard);border-color:var(--hazard);color:#111}
+.earlier{margin-top:24px;border:1px solid var(--rule)}
+.earlier summary{cursor:pointer;list-style:none;padding:12px 14px;font:600 12px 'IBM Plex Mono',monospace;display:flex;justify-content:space-between;gap:12px}
+.earlier summary::-webkit-details-marker{display:none}
+.earlier summary::after{content:"+";font-weight:500}
+.earlier[open] summary::after{content:"−"}
+.earlier summary:hover{background:var(--paper-2)}
+.earlier .group{padding:0 14px 14px}
+.earlier h4{font:600 10.5px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin:16px 0 4px}
+.earlier ul{list-style:none}
+.earlier li{font-size:13.5px;line-height:1.5;color:var(--mute);padding:8px 0;border-top:1px solid var(--rule)}
+.earlier li b{color:var(--ink);font-weight:500}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.results{margin-top:16px}
+.results table{width:100%;border-collapse:collapse;font:500 12.5px 'IBM Plex Mono',monospace;margin-top:12px}
+.results thead th{font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);text-align:right;padding:0 0 6px 10px}
+.results thead th:first-child{text-align:left;padding-left:0}
+.results tbody th{text-align:left;font:400 13.5px 'IBM Plex Sans',sans-serif;padding:6px 0;border-top:1px solid var(--rule)}
+.results td{text-align:right;padding:6px 0 6px 10px;border-top:1px solid var(--rule);white-space:nowrap}
+.results td.vr{color:var(--violet)}
+.results td.s{width:16px}
+.results td.s.no{color:var(--rule)}
+.r-note{margin-top:10px;font:500 11px 'IBM Plex Mono',monospace;color:var(--mute)}
+.pub-links{margin-top:28px;display:flex;flex-wrap:wrap;gap:22px}
+.pub-links a{font-weight:500;font-size:15px;text-decoration:none;border-bottom:3px solid var(--hazard);padding-bottom:1px}
+.pub-links a:hover{background:var(--hazard);color:#111}
+
+.projects{list-style:none;border-top:1px solid var(--rule)}
+.projects li{padding:22px 0;border-bottom:1px solid var(--rule)}
+.projects h3{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.16;margin:6px 0 8px}
+.projects p{color:var(--mute);font-size:14.5px}
+
+.sub{font:600 11px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin:36px 0 10px}
+.sub:first-of-type{margin-top:0}
+.edu{display:grid;grid-template-columns:1fr 1fr;gap:26px;border-top:1px solid var(--rule);padding-top:18px}
+.edu h3{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;margin:6px 0 2px;line-height:1.1}
+.edu p{color:var(--mute);font-size:14px}
+.edu .thesis{margin-top:8px;font-size:13.5px}
+.timeline{list-style:none;border-top:1px solid var(--rule)}
+.timeline li{display:grid;grid-template-columns:128px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.timeline .when{padding-top:3px}
+.timeline h4{font-weight:500;font-size:15.5px;line-height:1.35}
+.timeline p{font-size:14px;color:var(--mute);margin-top:4px}
+
+.contact-big{font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:clamp(40px,4.6vw,62px);line-height:1.02;letter-spacing:-.02em}
+.contact-big a{font-style:italic;color:#111;text-decoration:none;background:linear-gradient(var(--hazard),var(--hazard)) 0 0/100% 100% no-repeat;padding:0 .08em}
+/* the hazard highlight sweeps in like marker tape: on the name at load, on "trust" when the contact line arrives */
+@media (prefers-reduced-motion: no-preference){
+  h1 .second{animation:sweep .8s .25s cubic-bezier(.2,.7,.2,1) both}
+  html.js .contact-big a{background-size:0% 100%;transition:background-size .8s cubic-bezier(.2,.7,.2,1)}
+  html.js .contact-big a.lit{background-size:100% 100%}
+}
+@keyframes sweep{from{background-size:0% 100%}to{background-size:100% 100%}}
+.links{list-style:none;margin-top:36px;border-top:1px solid var(--rule)}
+.links li{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--rule)}
+.links a{flex:1;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px 0;text-decoration:none;font-weight:500;font-size:17px}
+.links a:hover{color:var(--accent)}
+.links a span{font:400 12px 'IBM Plex Mono',monospace;color:var(--mute);overflow-wrap:anywhere;text-align:right}
+.copy{background:none;border:1px solid var(--ink);font:600 11px 'IBM Plex Mono',monospace;padding:4px 9px;cursor:pointer;flex:none}
+.copy:hover{background:var(--ink);color:var(--paper)}
+.sheet.foot{padding-top:26px;padding-bottom:26px;display:flex;justify-content:space-between;align-items:center;align-content:center;gap:6px 12px;flex-wrap:wrap;font:500 12px 'IBM Plex Mono',monospace;color:var(--mute)}
+
+/* ---------- phones and narrow tablets: the cell shows through gaps between cards ---------- */
+@media (max-width:900px){
+  /* --gm is the strip above and below a centred gap; the gap itself shows the cell almost full screen */
+  :root{--col:100%;--pad:max(20px,calc((100% - 640px) / 2));--gm:max(56px,8vh)}
+  .column{background:transparent;background-image:none;border-right:0}
+  .sheet{background:var(--paper) var(--grain);padding-top:46px;padding-bottom:46px;border-top:0;border-bottom:1px solid var(--ink)}
+  .window + .sheet{border-top:1px solid var(--ink)}
+  .hero{padding-top:92px}
+  .window{display:block;height:calc(100vh - 2 * var(--gm))}
+  nav{padding:0 16px;gap:12px}
+  nav ul{display:none}
+  .menu-btn{display:block}
+  body.menu-open nav ul{display:flex;flex-direction:column;gap:0;position:fixed;top:var(--nav);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--ink);padding:6px 16px 12px}
+  body.menu-open nav ul a{display:block;padding:12px 0;font-size:13px;border-bottom:1px solid var(--rule)}
+  #log{left:16px;right:16px;top:calc(var(--gm) + 6px);height:142px}
+  #log.compact{height:76px}
+  #log.compact #beatBody{display:none}
+  #beatHead{font-size:21px;margin-top:8px}
+  #beatBody{font-size:12.5px}
+  #status{display:none}
+  .hero-row{grid-template-columns:118px 1fr;gap:18px}
+  .lede{font-size:16.5px}
+  .questions p{font-size:21px}
+  .pillars{grid-template-columns:1fr}
+  .edu{grid-template-columns:1fr}
+  .now li,.timeline li{grid-template-columns:1fr;gap:4px}
+  /* the footer is as tall as the strip below the band, so the last gap lines up with the cell at the very end */
+  .sheet.foot{min-height:var(--gm);padding-top:14px;padding-bottom:14px}
+}
+/* on phones whose toolbars change the viewport, size the gaps to the smallest viewport so the band always fits */
+@supports (height:1svh){
+  @media (max-width:900px){
+    :root{--gm:max(56px,8svh)}
+    .window{height:calc(100svh - 2 * var(--gm))}
+  }
+}
+@media (max-width:560px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stats div:nth-child(3){padding-left:0;border-left:0}
+  .stats div:nth-child(n+3){border-top:1px solid var(--rule)}
+}
+@media (max-width:440px){.hero-row{grid-template-columns:1fr}.photo{max-width:210px}}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  #log .swap,#vitals i,#hint span{animation:none}
+  #summary{transition:none}
+}
+@media print{
+  @page{margin:16mm 14mm}
+  #cell,#log,#vitals,#hint,#summary,nav,.window,.filters,.skip,.copy{display:none!important}
+  body{background:#fff}
+  .column{width:100%;border:0;background:#fff}
+  .sheet{padding:22px 0;border-color:#999;background:#fff}
+  .pubs li::before{display:none}
+  h1 .second,.contact-big a{background-size:100% 100%!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<canvas id="cell" role="img" aria-label="Illustrative simulation of the MSc welding-hoop task, driven by page scroll. A six-joint UR16e-style arm with a welding tool threads eight hoops on a welding plate. The operator first uses an Xbox gamepad, then a VR controller, then a proposed physiology-informed autonomy layer. Clearance, heart-rate variability, trust and a proposed speed limit are plotted as the task runs."></canvas>
+
+<aside id="log" data-mode="A" aria-hidden="true">
+  <div class="row"><span id="beatCode">A · Xbox gamepad</span><span class="pips" id="pips"></span><span id="status">cell ready</span></div>
+  <p id="beatHead">Ghost first, then commit.</p>
+  <p id="beatBody">The stick moves a ghost of the UR16e across the plate and the triggers lower it. The real arm moves only after the operator confirms.</p>
+</aside>
+<div id="vitals" aria-hidden="true"><b><i></i>Wearable</b><span id="vitalsText">HR 78 bpm · RMSSD 128 ms</span></div>
+<div id="hint" aria-hidden="true">Scroll to run the task <span>↓</span></div>
+<aside id="summary" aria-hidden="true">
+  <p class="s-k">Task complete · MSc study · n = 27</p>
+  <h3>What the study found</h3>
+  <table>
+    <thead><tr><th>Mean</th><th>Gamepad</th><th>VR</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Trial time</td><td>132.7 s</td><td class="vr">53.9 s</td><td class="s" title="Survived correction">●</td></tr>
+      <tr><td>Velocity</td><td>12.1 mm/s</td><td class="vr">31.1 mm/s</td><td class="s" title="Survived correction">●</td></tr>
+      <tr><td>RMS jerk</td><td>2511</td><td class="vr">1293</td><td class="s" title="Survived correction">●</td></tr>
+      <tr><td>Clearance</td><td>440 mm</td><td class="vr">279 mm</td><td class="s" title="Survived correction">●</td></tr>
+      <tr><td>HRV RMSSD</td><td>126 ms</td><td class="vr">90 ms</td><td class="s" title="Survived correction">●</td></tr>
+      <tr><td>Skin conductance</td><td>3.18 µS</td><td class="vr">3.12 µS</td><td class="s no" title="Did not survive correction">○</td></tr>
+      <tr><td>Trust, total</td><td>5.75</td><td class="vr">5.42</td><td class="s no" title="Did not survive correction">○</td></tr>
+      <tr><td>Perceived safety</td><td>5.73</td><td class="vr">5.27</td><td class="s" title="Survived correction">●</td></tr>
+    </tbody>
+  </table>
+  <p class="s-note">● survived Benjamini–Hochberg correction across 16 primary metrics</p>
+</aside>
+
+<nav aria-label="Primary">
+  <a class="brand" href="#top">Pratyush <em>Pallav</em></a>
+  <ul id="menu">
+    <li><a href="#now">Now</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="cv" href="Pratyush_Pallav_CV.pdf" target="_blank" rel="noopener">CV ↓</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+  <span class="bar" aria-hidden="true"><i id="bar"></i></span>
+</nav>
+
+<main class="column" id="main">
+
+  <header class="sheet hero" id="top">
+    <p class="kicker"><i></i>Human-robot interaction · MSc Robotics, Cranfield University</p>
+    <h1>Pratyush<br><span class="second">Pallav</span></h1>
+    <div class="hero-row">
+      <figure class="photo">
+        <span class="pic"><img src="photo.jpg" alt="Portrait of Pratyush Pallav" width="800" height="800"></span>
+        <figcaption>Ranchi, India</figcaption>
+      </figure>
+      <div>
+        <p class="lede">I work on <strong>how people come to trust and understand a robot they work alongside</strong>, and how interface design shapes that trust.</p>
+        <p class="lede-2">Can this relationship be captured by a computational model precise enough to transfer into complex robot manipulation?</p>
+      </div>
+    </div>
+    <div class="actions">
+      <a class="btn solid" href="Pratyush_Pallav_CV.pdf" target="_blank" rel="noopener">Download CV</a>
+      <a class="btn" href="mailto:pratyushpallav39@gmail.com">Email</a>
+      <a class="btn" href="https://scholar.google.com/citations?user=giTq7yYAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar ↗</a>
+    </div>
+    <p class="avail"><b></b>Open to funded PhD positions starting in 2027</p>
+    <p class="note">The robot cell on this page replays my MSc welding-hoop task as you scroll, first with a gamepad, then in VR, then with the autonomy layer I want to build next. It finishes when you reach the end. Live traces are illustrative, and μ marks the study's condition means.</p>
+  </header>
+
+  <div class="window" aria-hidden="true"></div>
+
+  <section class="sheet" id="now">
+    <p class="eyebrow">Now · October 2026</p>
+    <ul class="now">
+      <li><span class="when">Dec 2026</span><p><strong>LUMA</strong>, a role-assigned three-arm servicer for cooperative-satellite on-orbit servicing, is accepted at IEEE ICRM 2026 in Kollam.</p></li>
+      <li><span class="when">In review</span><p>Four first-author papers, including the thesis paper at the <em>International Journal of Social Robotics</em>.</p></li>
+      <li><span class="when">2027 start</span><p>Applying for funded PhD positions in human-robot interaction, shared autonomy and teleoperation.</p></li>
+    </ul>
+  </section>
+
+  <section class="sheet" id="research">
+    <p class="eyebrow">Research</p>
+    <h2>Questions</h2>
+    <ol class="questions">
+      <li>
+        <span class="q">Q1</span>
+        <p>How do people form trust in a robot they work alongside, and how do they build an understanding of its behaviour?</p>
+        <small>In my MSc study, trust behaved as largely dispositional within a session, which makes how it forms and when it shifts the open question.</small>
+      </li>
+      <li>
+        <span class="q">Q2</span>
+        <p>How does interface design shape that trust, and which cues make a robot's intent legible enough to rely on?</p>
+        <small>I built a ghost robot, graded multimodal warnings and a live HUD. Perceived safety, not overall trust, registered an interface's safety cost.</small>
+      </li>
+      <li>
+        <span class="q">Q3</span>
+        <p>Can this relationship be captured by a computational model precise enough to transfer into complex robot manipulation?</p>
+        <small>Heart-rate variability tracked the interface when trust did not, which makes operator state a candidate input for a manipulation controller.</small>
+      </li>
+    </ol>
+    <p class="stats-h">The MSc study in numbers</p>
+    <dl class="stats">
+      <div><dt>operators</dt><dd>27</dd></div>
+      <div><dt>interfaces, gamepad and VR</dt><dd>2</dd></div>
+      <div><dt>metrics survived correction</dt><dd>9/16</dd></div>
+      <div><dt>AUC, interface from physiology</dt><dd>0.87</dd></div>
+    </dl>
+    <div class="pillars">
+      <div class="pillar"><span class="q">P.01</span><h3>Trust dynamics</h3><p>Formation, erosion and recovery of trust across repeated interaction, and why it can stay put when risk changes.</p></div>
+      <div class="pillar"><span class="q">P.02</span><h3>Interface legibility</h3><p>Visual, auditory and haptic cues that expose robot intent and near-future risk to the operator.</p></div>
+      <div class="pillar"><span class="q">P.03</span><h3>Shared autonomy</h3><p>Arbitration between human input and autonomous control, informed by an estimate of operator state.</p></div>
+      <div class="pillar"><span class="q">P.04</span><h3>Manipulation transfer</h3><p>Moving models of trust and operator state from teleoperation studies into contact-rich manipulation control.</p></div>
+    </div>
+  </section>
+
+  <div class="window" aria-hidden="true"></div>
+
+  <section class="sheet" id="publications">
+    <p class="eyebrow">Publications</p>
+    <h2>Record</h2>
+    <div class="filters" role="group" aria-label="Filter publications">
+      <button type="button" aria-pressed="true" data-f="all">All</button>
+      <button type="button" aria-pressed="false" data-f="review">In review</button>
+      <button type="button" aria-pressed="false" data-f="accepted">Accepted</button>
+      <button type="button" aria-pressed="false" data-f="patent">Patent</button>
+    </div>
+    <ul class="pubs" id="pubs">
+      <li data-t="review"><div class="meta"><span class="q">01</span><span class="tag accent">Under review</span></div>
+        <h3>Trust Does Not Track Risk in Robot Teleoperation: An Empirical Dissociation and Its Computational Account</h3>
+        <p>Pallav &amp; Zhang · International Journal of Social Robotics (Springer Nature)</p></li>
+      <li data-t="review"><div class="meta"><span class="q">02</span><span class="tag accent">Under review</span></div>
+        <h3>A Transparent Teleoperation Architecture with Multimodal Control and Alert System for Industrial Welding Tasks</h3>
+        <p>Pallav &amp; Zhang · IEEE Telepresence 2026, Bristol, 9–13 November 2026</p></li>
+      <li data-t="review"><div class="meta"><span class="q">03</span><span class="tag accent">Under review</span></div>
+        <h3>Beacon-Grounded Trust Against Colluding Byzantine Swarms: A Sensing-Coverage Threshold for Resilience</h3>
+        <p>Pallav · Advanced Robotics (TADR-2026-0691)</p></li>
+      <li data-t="review"><div class="meta"><span class="q">04</span><span class="tag accent">Under review</span></div>
+        <h3>Trust and Engagement Aware Authority Allocation for Grid Frequency Control under False Data Injection</h3>
+        <p>Pallav · IEEE ICPC2T 2027, NIT Raipur, 3–5 March 2027</p></li>
+      <li data-t="accepted"><div class="meta"><span class="q">05</span><span class="tag live">Accepted</span></div>
+        <h3>LUMA: A Role-Assigned Three-Arm Servicer for Cooperative-Satellite On-Orbit Servicing</h3>
+        <p>Pallav, Barbu, Kashif, Fernandez, Sharma, Gu, Felicetti, Tang &amp; Upadhyay · IEEE ICRM 2026, Kollam, 17–19 December 2026</p></li>
+      <li data-t="accepted"><div class="meta"><span class="q">06</span><span class="tag live">Accepted</span></div>
+        <h3>Towards a Context-Adaptive Trust Scale for Industrial Human-Robot Collaboration: Development and Initial Content Validation</h3>
+        <p>Zhang, Burns, Pallav &amp; Fletcher · ICRES 2026 (CLAWAR), Cranfield, oral presentation · Springer LNNS</p></li>
+      <li data-t="review"><div class="meta"><span class="q">07</span><span class="tag">Revision submitted</span></div>
+        <h3>Voice-Commanded Physical Assistance for Individuals with Mobility Impairments: A ROS 2-Based Framework Using the Kinova Gen3 Manipulator</h3>
+        <p>Pallav &amp; Mahato · Engineering Research Express (ERX-121430)</p></li>
+      <li data-t="patent"><div class="meta"><span class="q">08</span><span class="tag">Patent filed</span></div>
+        <h3>A portable AI-enabled red-reflex imaging system for detection of retinoblastoma in children and method thereof</h3>
+        <p>Poddar, Banerjee, Pandey &amp; Pallav · BIT Mesra (PAT199/130/24)</p></li>
+    </ul>
+    <details class="earlier">
+      <summary>Earlier work in robotics and bioengineering (10)</summary>
+      <div class="group">
+        <h4>Journal articles</h4>
+        <ul>
+          <li><b>Optimizing the pick-and-place mechanism using MATLAB functionalities and Kinova Gen3.</b> Pallav &amp; Mahato (2025). Journal of Engineering Science and Technology, 18, 76–84.</li>
+          <li><b>Online continuous monitoring of time-domain parameters of heart rate variability using MATLAB and implementation on human and rat ECG data.</b> Pallav, Keshri, Aggarwal &amp; Sinha (2025). Journal of Clinical Engineering, 50, 15–21.</li>
+          <li><b>Coordinate-following robot using ArUco markers.</b> Pallav (2024). International Journal of Instrumentation Science and Engineering, 14, 1–8.</li>
+          <li><b>Neurocardiac effects of nicotine and caffeine in Wistar rats: an EEG-ECG study integrating inferential statistics and machine learning for applications in digital diagnostics.</b> Pandey, Kumar, Pallav, Mehra &amp; Sinha (2026). Indian Journal of Animal Research. <a href="https://doi.org/10.18805/IJAR.B-5827" target="_blank" rel="noopener">doi:10.18805/IJAR.B-5827</a></li>
+        </ul>
+        <h4>Book chapters</h4>
+        <ul>
+          <li><b>Vision-based controlled pick-and-place operation of a delta parallel robot.</b> Pallav, Mahato, Kumar &amp; Ghuku (2026). Machine Intelligence for Research and Innovations, MAiTRI 2025, LNNS, Springer.</li>
+          <li><b>Optimizing MRI-based brain tumor classification: a study of model efficiency and accuracy.</b> Pallav &amp; Keshri (2026). Biomedical Engineering Science and Technology, CCIS 2635, 328–343, Springer.</li>
+        </ul>
+        <h4>Conference presentations</h4>
+        <ul>
+          <li><b>Transformer-based detection of lung maladies and tuberculosis classification.</b> Nahar &amp; Pallav (2025). ICMMMI, NIT Jamshedpur.</li>
+          <li><b>MRI-based brain tumor classification using transformers.</b> Pallav &amp; Nahar (2024). IndoML Symposium, BITS Goa, poster.</li>
+          <li><b>Detection of tuberculosis using AI: a comparative CNN study.</b> Pallav &amp; Nahar (2024). ET2B, BIT Mesra.</li>
+        </ul>
+        <h4>Patent</h4>
+        <ul>
+          <li><b>Variable inertia flywheel design to reduce speed fluctuations under variable loading in diesel engines.</b> Mahato, Pallav &amp; Ranjan. Filed at BIT Mesra.</li>
+        </ul>
+      </div>
+    </details>
+    <div class="pub-links">
+      <a href="Pratyush_Pallav_Publications.pdf" target="_blank" rel="noopener">Full list (PDF)</a>
+      <a href="https://scholar.google.com/citations?user=giTq7yYAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>
+      <a href="https://www.researchgate.net/profile/Pratyush-Pallav/research" target="_blank" rel="noopener">ResearchGate</a>
+      <a href="https://orcid.org/0009-0005-5638-7499" target="_blank" rel="noopener">ORCID</a>
+    </div>
+  </section>
+
+  <div class="window" aria-hidden="true"></div>
+
+  <section class="sheet" id="projects">
+    <p class="eyebrow">Projects</p>
+    <h2>Work</h2>
+    <ul class="projects">
+      <li>
+        <span class="q">MSc thesis · Cranfield · 2025–2026</span>
+        <h3>Improving Human Performance and Trust in Robot Teleoperation through Transparent Interface Design</h3>
+        <p>Supervised by Dr Jingyi Zhang. Twenty-seven participants teleoperated a UR16e with a custom welding tool through an eight-hoop task, comparing an Xbox gamepad with VR control. VR was faster and smoother but cut the safety margin. Perceived safety and heart-rate variability registered that cost, while overall trust stayed comparatively stable.</p>
+        <details class="earlier results">
+          <summary>Key results, gamepad against VR</summary>
+          <div class="group">
+            <table>
+              <caption class="sr">Condition means from the MSc study, n = 27</caption>
+              <thead><tr><th scope="col">Mean</th><th scope="col">Gamepad</th><th scope="col">VR</th><th scope="col"><span class="sr">Survived correction</span></th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Trial time</th><td>132.7 s</td><td class="vr">53.9 s</td><td class="s">●<span class="sr"> yes</span></td></tr>
+                <tr><th scope="row">Velocity</th><td>12.1 mm/s</td><td class="vr">31.1 mm/s</td><td class="s">●<span class="sr"> yes</span></td></tr>
+                <tr><th scope="row">RMS jerk</th><td>2511</td><td class="vr">1293</td><td class="s">●<span class="sr"> yes</span></td></tr>
+                <tr><th scope="row">Clearance</th><td>440 mm</td><td class="vr">279 mm</td><td class="s">●<span class="sr"> yes</span></td></tr>
+                <tr><th scope="row">HRV RMSSD</th><td>126 ms</td><td class="vr">90 ms</td><td class="s">●<span class="sr"> yes</span></td></tr>
+                <tr><th scope="row">Skin conductance</th><td>3.18 µS</td><td class="vr">3.12 µS</td><td class="s no">○<span class="sr"> no</span></td></tr>
+                <tr><th scope="row">Trust, total</th><td>5.75</td><td class="vr">5.42</td><td class="s no">○<span class="sr"> no</span></td></tr>
+                <tr><th scope="row">Perceived safety</th><td>5.73</td><td class="vr">5.27</td><td class="s">●<span class="sr"> yes</span></td></tr>
+              </tbody>
+            </table>
+            <p class="r-note">● survived Benjamini–Hochberg correction across 16 primary metrics. Trust is on the 1 to 7 Context-Adaptive Trust Scale.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <span class="q">Industrial teleoperation · Under review</span>
+        <h3>Transparent welding teleoperation</h3>
+        <p>A teleoperation architecture for industrial welding that combines multimodal control with a graded alert system, so the operator can read the state of the robot and the risk ahead of it.</p>
+      </li>
+      <li>
+        <span class="q">Space robotics · MSc group project · Accepted</span>
+        <h3>LUMA, a three-arm on-orbit servicer</h3>
+        <p>Robotic arm design for on-orbit servicing, refuelling and assembly. The resulting paper on a role-assigned three-arm servicer for cooperative satellites is accepted at IEEE ICRM 2026.</p>
+      </li>
+      <li>
+        <span class="q">Planetary rover · CranSEDS · Mechanical lead</span>
+        <h3>Olympus Rovers Trials</h3>
+        <p>Led the mechanical design of Cranfield's rover, which was shortlisted in an Airbus-sponsored competition, with its Archimedes screw sampling mechanism noted as a particular highlight.</p>
+      </li>
+      <li>
+        <span class="q">Assistive robotics · ROS 2</span>
+        <h3>Voice-commanded physical assistance</h3>
+        <p>A ROS 2 framework that lets people with mobility impairments command a Kinova Gen3 manipulator by voice, with a pick-and-place pipeline underneath.</p>
+      </li>
+      <li>
+        <span class="q">Patent · Filed, BIT Mesra</span>
+        <h3>Red-reflex imaging for retinoblastoma</h3>
+        <p>A portable, AI-enabled imaging system for detecting retinoblastoma in children, developed with the Rajendra Institute of Medical Sciences during my research internship at the Bio-Photonics Lab.</p>
+      </li>
+    </ul>
+  </section>
+
+  <div class="window" aria-hidden="true"></div>
+
+  <section class="sheet" id="experience">
+    <p class="eyebrow">Experience</p>
+    <h2>Track record</h2>
+    <h3 class="sub">Education</h3>
+    <div class="edu">
+      <div>
+        <span class="when">Oct 2025 – Sep 2026</span>
+        <h3>MSc Robotics</h3>
+        <p>Cranfield University, United Kingdom</p>
+        <p class="thesis">Modules included Human-Robot Interaction, Autonomy in Robotic Systems, Robotics Control and Machine Vision for Robotics.</p>
+      </div>
+      <div>
+        <span class="when">Jul 2021 – Jun 2025</span>
+        <h3>BTech Mechanical Engineering</h3>
+        <p>Birla Institute of Technology, Mesra, India</p>
+        <p class="thesis">Thesis on optimising speech-based robotic manipulation for precision package handling.</p>
+      </div>
+    </div>
+    <h3 class="sub">Research positions</h3>
+    <ul class="timeline">
+      <li><span class="when">Jul 2024 – Apr 2025</span><div><h4>Undergraduate Researcher, Robotics and Automation Lab, BIT Mesra</h4><p>Deployed a Kinova Gen3 7-DOF arm in a simulated industrial cell with RGB-based package identification, and improved the earlier system by at least 35% with ROS, URDF, RViz and Gazebo.</p></div></li>
+      <li><span class="when">May – Jul 2024</span><div><h4>Research Intern, Bio-Photonics Lab, BIT Mesra</h4><p>Graded retinoblastoma severity with the Rajendra Institute of Medical Sciences, built a real-time retinal analysis algorithm at 87% accuracy, and filed a patent on a portable ophthalmoscope.</p></div></li>
+      <li><span class="when">May 2023 – May 2024</span><div><h4>Research Intern, Bio-Medical Lab, BIT Mesra</h4><p>EOG and EEG control for stroke patients, transformer models for MRI brain tumour and tuberculosis classification, and an ArUco-marker coordinate system for robots.</p></div></li>
+    </ul>
+    <h3 class="sub">Recognition and leadership</h3>
+    <ul class="timeline">
+      <li><span class="when">2024</span><div><p>Led the team, as President, to the finals of ISRO's rover development challenge, with a grant for further prototype development.</p></div></li>
+      <li><span class="when">2024</span><div><p>Second prize for a drone demonstration at a Government of India exhibition, as the only non-PhD participant.</p></div></li>
+      <li><span class="when">2023</span><div><p>Built Greet Bot, a service robot presented to senior Tata leadership at Tata TechEx.</p></div></li>
+      <li><span class="when">BIT Mesra</span><div><p>Revived Robolution, the official robotics club, after Covid as Vice President, and was a founding member and the first Vice-Chair of the ASME student section.</p></div></li>
+      <li><span class="when">Member</span><div><p>ASME, UKSEDS and The Robotics Society of India.</p></div></li>
+    </ul>
+  </section>
+
+  <div class="window" aria-hidden="true"></div>
+
+  <section class="sheet" id="contact">
+    <p class="eyebrow">Contact</p>
+    <p class="contact-big">Let's talk about <a href="mailto:pratyushpallav39@gmail.com">trust</a>, interfaces and control.</p>
+    <ul class="links">
+      <li><a href="mailto:pratyushpallav39@gmail.com">Email <span>pratyushpallav39@gmail.com</span></a><button class="copy" type="button" data-copy="pratyushpallav39@gmail.com">Copy</button></li>
+      <li><a href="Pratyush_Pallav_CV.pdf" target="_blank" rel="noopener">Curriculum vitae <span>PDF ↓</span></a></li>
+      <li><a href="https://scholar.google.com/citations?user=giTq7yYAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar <span>↗</span></a></li>
+      <li><a href="https://www.researchgate.net/profile/Pratyush-Pallav/research" target="_blank" rel="noopener">ResearchGate <span>↗</span></a></li>
+      <li><a href="https://orcid.org/0009-0005-5638-7499" target="_blank" rel="noopener">ORCID <span>↗</span></a></li>
+      <li><a href="https://www.linkedin.com/in/pratyush-pallav-5a3a3321b/" target="_blank" rel="noopener">LinkedIn <span>↗</span></a></li>
+    </ul>
+  </section>
+
+  <div class="window" aria-hidden="true"></div>
+
+  <footer class="sheet foot">
+    <span>© 2026 Pratyush Pallav · Updated October 2026</span>
+    <span>Eight hoops, one question</span>
+  </footer>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const cvs = document.getElementById('cell');
+  const mainCtx = cvs.getContext('2d');
+  let ctx = mainCtx;                                   // pointed at the static layer while that is painted
+  const layer = document.createElement('canvas');      // backdrop, bench, riser and plate, painted once per layout
+  const barEl = document.getElementById('bar');
+  const summaryEl = document.getElementById('summary');
+  const colEl = document.querySelector('.column');
+  const logEl = document.getElementById('log');
+  const beatCode = document.getElementById('beatCode');
+  const beatHead = document.getElementById('beatHead');
+  const beatBody = document.getElementById('beatBody');
+  const statusEl = document.getElementById('status');
+  const pipsEl = document.getElementById('pips');
+  const vitalsEl = document.getElementById('vitals');
+  const vitalsDot = vitalsEl.querySelector('i');
+  const vitalsText = document.getElementById('vitalsText');
+  const hintEl = document.getElementById('hint');
+  const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const smooth = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+  const smoother = t => { t = clamp(t, 0, 1); return t * t * t * (t * (6 * t - 15) + 10); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+
+  // ======================= The task, in world units: X across the plate, Y into depth, Z up =======================
+  const N = 8;
+  const R_HOOP = 0.055, Z_RING = 0.20, Z_SAFE = 0.46, SINK = -0.042;
+  const MM = 1700;                      // world unit to millimetres for readouts
+  const LEAN = 0.17;                    // torch work angle (rad)
+  const DIR = { x: Math.sin(LEAN), y: Math.cos(LEAN) };
+  const UNREACH = 1;                    // gamepad hoop where the ghost is dragged outside the workspace
+  const COLLIDE = 4;                    // VR hoop where a collision warning is confirmed anyway
+  const GATE = 6;                       // the proposed layer gates a risky confirm
+  const MODE = k => (k < 3 ? 'A' : k < 6 ? 'B' : 'C');
+  const HOOPS = [];
+  for (let i = 0; i < N; i++) {
+    const th = (60 + i * 240 / (N - 1)) * Math.PI / 180;     // eight hoops in a C, as in the study
+    HOOPS.push({ X: 0.5 + 0.32 * Math.cos(th), Y: 0.30 + 0.22 * Math.sin(th), tilt: (hash(i + 4) - 0.5) * 1.5 });
+  }
+  const HOME = { X: 0.26, Y: 0.12, Z: 0.60 };
+  const DET = { X: 1.2, Y: 0.04, Z: 0.24 };                   // pushed outside the workspace in layout()
+  const P3w = q => (q === 'D' ? DET : q);
+  const at = (X, Y, Z) => ({ X, Y, Z });
+
+  // Scroll timeline across the whole page: idle, eight hoops (A gamepad, B VR, C proposed), park.
+  const SEGS = [{ k: -1, w: 0.45 }, { k: 0, w: 1.2 }, { k: 1, w: 1.3 }, { k: 2, w: 1.15 },
+                { k: 3, w: 0.85 }, { k: 4, w: 1.0 }, { k: 5, w: 0.85 },
+                { k: 6, w: 1.3 }, { k: 7, w: 1.1 }, { k: 8, w: 0.55 }];
+  (() => { const tot = SEGS.reduce((s, x) => s + x.w, 0); let a = 0; SEGS.forEach(s => { s.p0 = a / tot; a += s.w; s.p1 = a / tot; }); })();
+  function segOf(p) {
+    p = clamp(p, 0, 1);
+    for (const s of SEGS) if (p < s.p1) return { k: s.k, c: (p - s.p0) / (s.p1 - s.p0) };
+    return { k: 8, c: 1 };
+  }
+  const pAt = (k, c) => { const s = SEGS.find(x => x.k === k); return s.p0 + c * (s.p1 - s.p0); };
+
+  function along(pts, u) {
+    const Q = pts.map(P3w);
+    const seg = []; let tot = 0;
+    for (let i = 1; i < Q.length; i++) { const d = Math.hypot(Q[i].X - Q[i - 1].X, Q[i].Y - Q[i - 1].Y, Q[i].Z - Q[i - 1].Z); seg.push(d); tot += d; }
+    if (!tot) return Q[Q.length - 1];
+    let s = clamp(u, 0, 1) * tot;
+    for (let i = 0; i < seg.length; i++) {
+      if (s <= seg[i] || i === seg.length - 1) {
+        const f = seg[i] ? clamp(s / seg[i], 0, 1) : 1;
+        return at(lerp(Q[i].X, Q[i + 1].X, f), lerp(Q[i].Y, Q[i + 1].Y, f), lerp(Q[i].Z, Q[i + 1].Z, f));
+      }
+      s -= seg[i];
+    }
+    return Q[Q.length - 1];
+  }
+  const bez = (a, m, b, n) => {
+    const o = [];
+    for (let i = 0; i <= n; i++) { const t = i / n, u = 1 - t; o.push(at(u * u * a.X + 2 * u * t * m.X + t * t * b.X, u * u * a.Y + 2 * u * t * m.Y + t * t * b.Y, u * u * a.Z + 2 * u * t * m.Z + t * t * b.Z)); }
+    return o;
+  };
+
+  // One cycle per hoop: place the ghost, confirm once, execute, weld, lift.
+  const CYC = [];
+  (function build() {
+    let start = HOME;
+    for (let k = 0; k < N; k++) {
+      const hp = HOOPS[k], mode = MODE(k);
+      const cy = { k, mode, hp, start, ghost: [], tool: null, commit: null, weld: null, lift: null, yellow: null, gate: null, target: null, end: null };
+      if (mode === 'A') {
+        // Gamepad: the stick nudges the ghost across the plate in corrective steps, the triggers lower it.
+        const over = at(hp.X, hp.Y, Z_SAFE), ring = at(hp.X, hp.Y, Z_RING), weld = at(hp.X, hp.Y, 0);
+        const high = at(hp.X, hp.Y, start.Z);
+        let c = 0.02, from = start;
+        if (k === UNREACH) {
+          cy.ghost.push({ c0: 0.02, c1: 0.08, path: [start, 'D'], kind: 'xy' });
+          cy.yellow = [0.075, 0.14];
+          from = 'D'; c = 0.14;
+        }
+        const f0 = P3w(from);
+        const mid = at(lerp(f0.X, high.X, 0.55), lerp(f0.Y, high.Y, 0.55), high.Z);
+        const over7 = at(high.X + (high.X - f0.X) * 0.08, high.Y + (high.Y - f0.Y) * 0.08, high.Z);
+        cy.ghost.push({ c0: c, c1: c + 0.05, path: [from, mid], kind: 'xy' });
+        cy.ghost.push({ c0: c + 0.065, c1: c + 0.11, path: [mid, over7], kind: 'xy' });
+        cy.ghost.push({ c0: c + 0.125, c1: c + 0.145, path: [over7, high], kind: 'xy' });
+        c += 0.16;
+        cy.ghost.push({ c0: c, c1: c + 0.05, path: [high, ring], kind: 'z' });
+        cy.ghost.push({ c0: c + 0.065, c1: c + 0.10, path: [ring, weld], kind: 'z' });
+        c += 0.115;
+        cy.commit = [c, c + 0.035];
+        cy.tool = { c0: c + 0.035, c1: c + 0.29, path: [start, over, ring, weld] };
+        c += 0.29;
+        cy.weld = [c, c + 0.13];
+        cy.lift = [c + 0.13, 1, [weld, over]];
+        cy.target = weld; cy.end = over;
+      } else {
+        // VR: one fluid hand movement places the ghost. In B the hand threads closer to the rim.
+        const off = mode === 'B' ? 0.62 * R_HOOP : 0;
+        const ox = -off * 0.6, oy = off * 0.8;
+        const over = at(hp.X + ox, hp.Y + oy, Z_SAFE), ring = at(hp.X + ox, hp.Y + oy, Z_RING);
+        const weld = at(hp.X + ox * 0.6, hp.Y + oy * 0.6, 0), deep = at(weld.X, weld.Y, SINK);
+        const sv = P3w(start);
+        const ctrl = at((sv.X + over.X) / 2, (sv.Y + over.Y) / 2, Math.max(sv.Z, Z_SAFE) + 0.10);
+        const sweep = bez(sv, ctrl, over, 14);
+        if (mode === 'B') {
+          const risky = k === COLLIDE;
+          const end = risky ? deep : weld;
+          cy.ghost.push({ c0: 0.02, c1: risky ? 0.22 : 0.26, path: [...sweep, ring, end], ease: 'smoother', kind: 'hand' });
+          cy.commit = [0.285, 0.325];
+          cy.tool = { c0: 0.325, c1: 0.53, path: [...sweep, ring, end] };
+          cy.weld = [0.53, 0.67];
+          cy.lift = [0.67, 1, [end, over]];
+          cy.target = end;
+        } else if (k === GATE) {
+          cy.ghost.push({ c0: 0.02, c1: 0.22, path: [...sweep, ring, deep], ease: 'smoother', kind: 'hand' });
+          cy.gate = [0.27, 0.34];
+          cy.ghost.push({ c0: 0.27, c1: 0.33, path: [deep, weld], kind: 'auto' });
+          cy.commit = [0.345, 0.39];
+          cy.tool = { c0: 0.39, c1: 0.76, path: [...sweep, ring, weld] };
+          cy.weld = [0.76, 0.88];
+          cy.lift = [0.88, 1, [weld, over]];
+          cy.target = weld;
+        } else {
+          cy.ghost.push({ c0: 0.02, c1: 0.26, path: [...sweep, ring, weld], ease: 'smoother', kind: 'hand' });
+          cy.commit = [0.285, 0.33];
+          cy.tool = { c0: 0.33, c1: 0.64, path: [...sweep, ring, weld] };
+          cy.weld = [0.64, 0.78];
+          cy.lift = [0.78, 1, [weld, over]];
+          cy.target = weld;
+        }
+        cy.end = over;
+      }
+      CYC.push(cy);
+      start = cy.end;
+    }
+  })();
+
+  function ghostSeg(cy, c) {
+    for (const s of cy.ghost) if (c >= s.c0 && c <= s.c1) return s;
+    return null;
+  }
+  function ghostAt(cy, c) {
+    const g = cy.ghost;
+    if (c <= g[0].c0) return P3w(g[0].path[0]);
+    for (let i = 0; i < g.length; i++) {
+      const s = g[i];
+      if (c < s.c0) { const pv = g[i - 1].path; return P3w(pv[pv.length - 1]); }
+      if (c <= s.c1) return along(s.path, (s.ease === 'smoother' ? smoother : smooth)((c - s.c0) / (s.c1 - s.c0)));
+    }
+    const l = g[g.length - 1].path; return P3w(l[l.length - 1]);
+  }
+  function toolAt(cy, c) {
+    const t = cy.tool;
+    if (c < t.c0) return P3w(cy.start);
+    if (c <= t.c1) return along(t.path, smoother((c - t.c0) / (t.c1 - t.c0)));
+    if (c < cy.lift[0]) return P3w(cy.target);
+    return along(cy.lift[2], smoother((c - cy.lift[0]) / (cy.lift[1] - cy.lift[0])));
+  }
+  function stateAt(p) {
+    const { k, c } = segOf(p);
+    if (k < 0) return { k, c, mode: 'A', cy: null, tool: HOME, ghost: null };
+    if (k >= N) return { k, c, mode: 'C', cy: null, tool: along([CYC[N - 1].end, HOME], smoother((c - 0.1) / 0.7)), ghost: null };
+    const cy = CYC[k];
+    return { k, c, mode: cy.mode, cy, tool: toolAt(cy, c), ghost: ghostAt(cy, c) };
+  }
+  function overlayOf(st) {
+    const { cy, c, ghost } = st;
+    if (!cy) return null;
+    if (cy.yellow && c >= cy.yellow[0] && c < cy.yellow[1]) return 'yellow';
+    if (cy.k === COLLIDE) {
+      if (c >= cy.commit[0] + 0.02 && c < cy.lift[0] + 0.04) return 'purple';
+      if (c < cy.commit[0] + 0.02 && ghost.Z < SINK * 0.48) return 'lavender';
+    }
+    if (cy.k === GATE) {
+      if (c >= cy.gate[0] && c < cy.gate[1]) return 'gate';
+      if (c < cy.gate[0] && ghost.Z < SINK * 0.48) return 'lavender';
+    }
+    return null;
+  }
+  function phaseOf(st, ov) {
+    const { k, c, cy } = st;
+    if (k < 0) return 'cell ready';
+    if (k >= N) return c > 0.8 ? 'parked · task complete' : 'returning home';
+    const hoop = `hoop ${k + 1}/8 · `;
+    if (ov === 'yellow') return hoop + 'outside workspace';
+    if (ov === 'gate') return hoop + 'confirm gated';
+    const gEnd = cy.ghost[cy.ghost.length - 1].c1;
+    if (c < gEnd + 0.005) return hoop + (ov === 'lavender' ? 'collision predicted' : (cy.mode === 'A' ? 'nudging ghost' : 'placing ghost by hand'));
+    if (c < cy.commit[0]) return hoop + (ov === 'lavender' ? 'collision predicted' : 'ghost placed');
+    if (c < cy.commit[1]) return hoop + (cy.mode === 'C' ? 'confirm · grip + trigger' : cy.mode === 'B' ? 'confirm · trigger' : 'confirm');
+    if (c < cy.tool.c1) return hoop + (k === COLLIDE ? 'moving into collision' : 'executing');
+    if (c < cy.lift[0]) return hoop + (k === COLLIDE ? 'contact · danger zone' : 'welding');
+    return hoop + 'lifting';
+  }
+  const doneAt = st => (st.k < 0 ? 0 : st.k >= N ? N : st.k + (st.c >= st.cy.lift[0] ? 1 : 0));
+
+  // ======================= Signals, precomputed once so scrubbing is deterministic =======================
+  function clearanceOf(q) {
+    if (q.Z < SINK * 0.48) return 0;
+    let best = 9;
+    for (const hp of HOOPS) {
+      const dx = q.X - hp.X, dy = q.Y - hp.Y;
+      best = Math.min(best, Math.hypot(Math.hypot(dx, dy) - R_HOOP, q.Z - Z_RING));
+      const dz = q.Z > Z_RING ? q.Z - Z_RING : (q.Z < 0 ? -q.Z : 0);
+      best = Math.min(best, Math.hypot(Math.hypot(q.X - (hp.X + R_HOOP), dy), dz));
+    }
+    return best;
+  }
+  function hrvTarget(st) {
+    let v = st.mode === 'A' || st.k < 0 ? 128 : 92;           // condition means in the study: 126 and 90 ms RMSSD
+    const { cy, c } = st;
+    if (cy) {
+      if (cy.yellow && c > cy.yellow[0] && c < cy.yellow[1] + 0.03) v -= 16;
+      if (cy.k === COLLIDE && c > 0.18 && c < cy.lift[0] + 0.05) v -= c > cy.commit[0] ? 30 : 14;
+      if (cy.k === GATE && c > 0.12 && c < cy.gate[1]) v -= 16;
+    }
+    return v;
+  }
+  const M = 2400;
+  const SIG = { hrv: new Float32Array(M + 1), clr: new Float32Array(M + 1), temp: new Float32Array(M + 1) };
+  (function precompute() {
+    let hrv = 128, temp = 0;
+    for (let i = 0; i <= M; i++) {
+      const st = stateAt(i / M);
+      const tgt = hrvTarget(st);
+      hrv += (tgt - hrv) * (tgt < hrv ? 0.035 : 0.006);       // fast withdrawal, slow recovery
+      SIG.hrv[i] = hrv;
+      SIG.clr[i] = clearanceOf(st.tool) * MM;
+      const hot = st.cy && st.cy.k !== COLLIDE && st.c >= st.cy.weld[0] && st.c < st.cy.weld[1];
+      temp += ((hot ? 1 : 0) - temp) * (hot ? 0.10 : 0.010);
+      SIG.temp[i] = temp;
+    }
+  })();
+  const sample = (arr, p) => { const f = clamp(p, 0, 1) * M, i = Math.floor(f), j = Math.min(M, i + 1); return lerp(arr[i], arr[j], f - i); };
+  const proposedOn = p => p >= pAt(GATE, 0);
+  const speedAt = p => (proposedOn(p) ? clamp(0.35 + 0.65 * (sample(SIG.hrv, p) - 70) / 56, 0.35, 1) : 1);
+  // Study means (Context-Adaptive Trust Scale, 1–7) after each condition. Total did not survive correction; safety did.
+  const TQ = [{ k: 2, total: 5.75, safety: 5.73 }, { k: 5, total: 5.42, safety: 5.27 }];
+
+  // ======================= Story beats above the cell =======================
+  const BEATS = [
+    { from: -1, mode: 'A', code: 'A · Xbox gamepad', head: 'Ghost first, then commit.', body: 'The stick moves a ghost of the UR16e across the plate and the triggers lower it. The real arm moves only after the operator confirms.' },
+    { from: 1, mode: 'A', code: 'A · graded warnings', head: 'Warnings escalate instead of firing once.', body: 'Drag the ghost outside the workspace and a yellow overlay, a spoken “Warning” and a controller buzz arrive together.' },
+    { from: 2, mode: 'A', code: 'A · live HUD', head: "The robot's state is never hidden.", body: 'Joint angles, distance to the hoop, work angle, tip temperature and progress stream to the operator at 50 Hz.' },
+    { from: 3, mode: 'B', code: 'B · VR controller', head: 'Same task, embodied control.', body: 'The hand maps straight onto the tool and a laser ties it to the marker sphere. Trials were faster and smoother, 53.9 s against 132.7 s on average.' },
+    { from: 4, mode: 'B', code: 'B · the cost', head: 'Clearance shrinks.', body: 'Lavender predicts a collision. Confirming anyway turns it purple and the voice says “Please lift up”. Mean clearance fell from 440 mm to 279 mm.' },
+    { from: 5, mode: 'B', code: 'B · dissociation', head: 'Trust does not track risk.', body: 'Perceived safety and heart-rate variability registered the cost (RMSSD 126 to 90 ms). Skin conductance did not, and overall trust stayed comparatively stable.' },
+    { from: 6, mode: 'C', code: 'C · proposed', head: 'Autonomy that reads the operator.', body: 'A wearable estimate of operator state lowers the speed limit, widens the clearance margin and gates confirmation during a hazard.' },
+    { from: 7, mode: 'C', code: 'C · open question', head: 'Can this be modelled precisely enough to drive manipulation?', body: 'That is the question I want to take into a PhD, working toward a computational account of trust and operator state that a manipulation controller can use.' }
+  ];
+  const pips = [];
+  // one marker per hoop; clicking one scrolls the page to that point in the task
+  for (let i = 0; i < N; i++) {
+    const el = document.createElement('button');
+    el.type = 'button'; el.tabIndex = -1;
+    el.className = i < 3 ? 'a' : i < 6 ? 'b' : 'c';
+    el.title = `Jump to hoop ${i + 1}`;
+    el.addEventListener('click', () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({ top: Math.round(pAt(i, 0.03) * max), behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+    pipsEl.appendChild(el); pips.push(el);
+  }
+  let beatIdx = -1, lastStatus = '', lastPip = '', lastVitals = '', lastHr = 0;
+  function updateOverlayDom(st, ov, p) {
+    let b = 0;
+    BEATS.forEach((x, i) => { if (st.k >= x.from) b = i; });
+    if (b !== beatIdx) {
+      beatIdx = b;
+      const x = BEATS[b];
+      logEl.dataset.mode = x.mode;
+      beatCode.textContent = x.code; beatHead.textContent = x.head; beatBody.textContent = x.body;
+      [beatHead, beatBody].forEach(el => { el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); });
+    }
+    const s = phaseOf(st, ov);
+    if (s !== lastStatus) { statusEl.textContent = s; lastStatus = s; }
+    const done = doneAt(st), cur = st.k >= 0 && st.k < N ? st.k : -1;
+    const key = done + ':' + cur;
+    if (key !== lastPip) { lastPip = key; pips.forEach((el, i) => { el.classList.toggle('done', i < done); el.classList.toggle('now', i === cur); }); }
+    const hrv = sample(SIG.hrv, p), hr = Math.round(78 + (128 - hrv) * 0.06);
+    const vt = `HR ${hr} bpm · RMSSD ${Math.round(hrv)} ms`;
+    if (vt !== lastVitals) { vitalsText.textContent = vt; lastVitals = vt; }
+    if (hr !== lastHr) { vitalsDot.style.animationDuration = (60 / hr).toFixed(2) + 's'; lastHr = hr; }
+    hintEl.classList.toggle('off', p > pAt(0, 0.01));
+  }
+
+  // ======================= Colours =======================
+  let C = {};
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = (n, f) => (cs.getPropertyValue(n) || '').trim() || f;
+    C = { ink: g('--ink', '#121314'), paper: g('--paper', '#e2e4e0'), paper2: g('--paper-2', '#d3d6d2'), mute: g('--mute', '#53585d'),
+          rule: g('--rule', '#b3b7ba'), hazard: g('--hazard', '#ffc21a'), amber: '#bd6b00', red: '#e5484d', violet: '#7c3aed', lav: '#b9a6ff' };
+  }
+  const OV = {
+    yellow:   { col: '#ffd21f', txt: '#111', say: 'VOICE · “Warning”' },
+    lavender: { col: '#b9a6ff', txt: '#111', say: 'VOICE · “Collision predicted”' },
+    purple:   { col: '#7c3aed', txt: '#fff', say: 'VOICE · “Please lift up”' },
+    gate:     { col: '#ffc21a', txt: '#111', say: 'PROPOSED · confirm gated' }
+  };
+  const MONO = '"IBM Plex Mono", ui-monospace, monospace';
+
+  // ======================= Layout and projection =======================
+  // RX/RW: the cell's strip of the screen. SX/SW/SR: the scene inside it. PX/PY/PW/PH: the signal panel.
+  let w = 0, h = 0, dpr = 1, small = false, side = false, RX = 0, RW = 0, SX = 0, SW = 0, SR = 0;
+  let bandTop = 52, top0 = 0, pt = 0, pb = 0, T = 0, S = 1, PX = 0, PY = 0, PW = 1, PH = 1, ZM = 1, longLabel = true, pillUp = false;
+  const PAD_LABEL = 'XBOX GAMEPAD · STICK XY · TRIGGERS Z', VR_LABEL = 'VR HEADSET · HAND CONTROLLER';
+  let O = { x: 0, y: 0 }, U = 1, V = { x: 0, y: -1 }, HZ = 1;
+  let B0 = null, S0 = null, LU = 1, LFo = 1, TL = 50, LF = 12, L5 = 22, L4 = 26, REACH = 1;
+  const P = (X, Y, Z) => ({ x: O.x + X * U + Y * V.x, y: O.y + Y * V.y - Z * HZ });
+  const P3 = q => P(q.X, q.Y, q.Z);
+
+  // UR-style wrist stacked above the tool tip: tool mount, flange (wrist 3), wrist 2, wrist 1.
+  function wristFor(tip) {
+    const H = { x: tip.x - DIR.x * TL, y: tip.y - DIR.y * TL };
+    const W3 = { x: H.x - DIR.x * LF, y: H.y - DIR.y * LF };
+    const W2 = { x: W3.x - DIR.y * L5, y: W3.y + DIR.x * L5 };
+    const W1 = { x: W2.x - DIR.x * L4, y: W2.y - DIR.y * L4 };
+    return { H, W3, W2, W1 };
+  }
+  function ik(b, l1, l2, tx, ty) {
+    const dx = tx - b.x, dy = ty - b.y;
+    const d = clamp(Math.hypot(dx, dy), Math.abs(l1 - l2) + 1, l1 + l2 - 1);
+    const cos2 = (d * d - l1 * l1 - l2 * l2) / (2 * l1 * l2);
+    const q2 = Math.acos(clamp(cos2, -1, 1));
+    const q1 = Math.atan2(dy, dx) - Math.atan2(l2 * Math.sin(q2), l1 + l2 * Math.cos(q2));
+    return { q1, q2 };
+  }
+  // Six links: base column, upper arm, forearm, wrist 1, wrist 2, wrist 3 (flange), then the torch.
+  function chain(tip) {
+    const wr = wristFor(tip);
+    const { q1, q2 } = ik(S0, LU, LFo, wr.W1.x, wr.W1.y);
+    const E = { x: S0.x + LU * Math.cos(q1), y: S0.y + LU * Math.sin(q1) };
+    const W1 = { x: E.x + LFo * Math.cos(q1 + q2), y: E.y + LFo * Math.sin(q1 + q2) };
+    const dx = W1.x - wr.W1.x, dy = W1.y - wr.W1.y;
+    return {
+      B0, S0, E, W1,
+      W2: { x: wr.W2.x + dx, y: wr.W2.y + dy }, W3: { x: wr.W3.x + dx, y: wr.W3.y + dy },
+      H: { x: wr.H.x + dx, y: wr.H.y + dy }, Ht: wr.H, tip, reachable: Math.hypot(dx, dy) < 1.5, q1, q2
+    };
+  }
+
+  // Every pose the tool or the ghost visits, including points along each move. World units, so computed once.
+  const TIPS = [HOME];
+  CYC.forEach(cy => {
+    TIPS.push(P3w(cy.start), P3w(cy.target), P3w(cy.end));
+    cy.tool.path.forEach(q => TIPS.push(P3w(q)));
+    for (let i = 1; i < 12; i++) TIPS.push(along(cy.tool.path, i / 12));
+    cy.ghost.forEach(s => s.path.forEach(q => { if (q !== 'D') TIPS.push(q); }));
+  });
+  // The shoulder height that keeps every elbow lowest without folding back past the edge of the cell.
+  function searchShoulder(sx0, span) {
+    const wrists = TIPS.map(q => wristFor(P3(q)).W1);
+    const minWy = Math.min(...wrists.map(q => q.y));
+    let best = null;
+    for (let i = 0; i <= 20; i++) {
+      const s0 = { x: sx0, y: lerp(minWy - 0.05 * span, T - 0.12 * span, i / 20) };
+      let maxD = 0;
+      wrists.forEach(W1 => { maxD = Math.max(maxD, Math.hypot(W1.x - s0.x, W1.y - s0.y)); });
+      const R = maxD * 1.05, lu = R * 0.54, lf = R * 0.46;
+      let topY = Infinity, leftX = Infinity;
+      wrists.forEach(W1 => {
+        const { q1 } = ik(s0, lu, lf, W1.x, W1.y);
+        topY = Math.min(topY, s0.y + lu * Math.sin(q1));
+        leftX = Math.min(leftX, s0.x + lu * Math.cos(q1));
+      });
+      const score = topY - (leftX < RX + 26 * S ? 1e6 : 0);
+      if (!best || score > best.score) best = { score, s0, R, topY };
+    }
+    return best;
+  }
+
+  // The story box is as tall as its longest beat at this width, so no beat is clipped and the scene gets the rest.
+  function fitLog() {
+    const keep = [beatCode.textContent, beatHead.textContent, beatBody.textContent];
+    logEl.style.height = 'auto';
+    let most = 0;
+    BEATS.forEach(b => {
+      beatCode.textContent = b.code; beatHead.textContent = b.head; beatBody.textContent = b.body;
+      most = Math.max(most, logEl.offsetHeight);
+    });
+    [beatCode.textContent, beatHead.textContent, beatBody.textContent] = keep;
+    logEl.style.height = Math.ceil(most) + 'px';
+  }
+
+  // Lay out the panel and the scene below the story text, then fit the robot. Returns the zoom the scene needed.
+  function arrange(compact) {
+    logEl.classList.toggle('compact', compact);
+    fitLog();
+    top0 = Math.round(logEl.getBoundingClientRect().bottom + 8);
+    if (side) {
+      // a phone on its side: the scene on the left, the signals on the right
+      PW = Math.round(clamp(RW * 0.42, 280, 420)); PX = RX + RW - PW; PY = top0 - 2; PH = pb - PY;
+      SR = PX - 8; pt = pb;
+    } else {
+      PH = Math.round(small ? clamp((pb - bandTop) * 0.3, 168, 230) : clamp(h * 0.27, 170, 250));
+      PX = RX; PW = RW; PY = pb - PH; SR = RX + RW; pt = PY;
+    }
+    SW = Math.min(SR - RX, 1100); SX = RX + (SR - RX - SW) / 2;
+    T = pt - (small ? 46 : clamp(h * 0.08, 54, 74));
+    // depth is capped against width, so a very tall cell keeps a natural perspective and gains air above instead
+    const sh = Math.max(80, Math.min(T - top0, (small ? 0.72 : 0.6) * SW));
+    // The plate fills the width. If the arm would rise into the story text, flatten the vertical scale a little,
+    // then zoom the whole scene out about the middle of the plate until it fits.
+    const g = small ? { ox: 0.19, u: 0.52, vx: 0.08, vy: 0.40, bx: 0.085 } : { ox: 0.22, u: 0.45, vx: 0.10, vy: 0.42, bx: 0.085 };
+    const s1 = small ? clamp(SW / 540, 0.72, 1) : clamp(SW / 860, 0.78, 1.15);
+    // Zoom anchor: on desktop the robot's base, so the operator station on the right stays clear; on phones the
+    // middle of the plate, so the arm keeps room to fold at the left edge.
+    const A = small ? SX + (g.ox + 0.5 * g.u + 0.3 * g.vx) * SW : SX + g.bx * SW;
+    let best = null, zoom = 1;
+    fit: for (let zx = 1; zx > 0.4; zx *= 0.94) {
+      zoom = zx;
+      S = s1 * zx;
+      TL = 50 * S; LF = 12 * S; L5 = 22 * S; L4 = 26 * S;
+      U = zx * g.u * SW;
+      // depth and height scales never outgrow the width, so the hoops keep the same proportions on every screen
+      V = { x: zx * g.vx * SW, y: -Math.min(zx * g.vy * sh / 0.6, 0.82 * U) };
+      O = { x: A + zx * (SX + g.ox * SW - A), y: T };
+      const sx0 = A + zx * (SX + g.bx * SW - A);
+      const backY = T + 0.49 * V.y;
+      const hz0 = Math.max(40 * zx, Math.min(0.5 * sh * zx, 0.52 * U, (backY - top0 - 10 - (TL + LF + L4)) / Z_SAFE));
+      for (const f of [1, 0.86, 0.74]) {
+        HZ = hz0 * f;
+        best = searchShoulder(sx0, sh * zx);
+        if (best.topY - 16 * S >= top0 + 2) break fit;
+      }
+    }
+    S0 = best.s0;
+    B0 = { x: S0.x, y: Math.min(S0.y + 0.11 * sh * zoom, T - 6) };
+    REACH = best.R;
+    LU = REACH * 0.54; LFo = REACH * 0.46;
+    ZM = zoom;
+    return zoom;
+  }
+
+  function layout() {
+    readColors();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth; h = window.innerHeight;
+    small = w <= 900;
+    RX = small ? 0 : Math.round(colEl.getBoundingClientRect().right);
+    RW = Math.max(1, w - RX);
+    // the canvas covers only the cell, not the reading column, which saves fill-rate on high-DPI screens
+    cvs.style.left = RX + 'px'; cvs.style.width = RW + 'px';
+    cvs.width = Math.round(RW * dpr); cvs.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, -RX * dpr, 0);
+
+    // The band the cell may use. On phones it is what a gap between two cards shows when that gap is centred.
+    bandTop = 52; pb = h;
+    if (small) {
+      const win = document.querySelector('.window');
+      logEl.classList.remove('compact');
+      bandTop = Math.round(logEl.getBoundingClientRect().top - 6);
+      pb = Math.min(h, bandTop + Math.round(win ? win.getBoundingClientRect().height : h - 2 * bandTop));
+    }
+    side = small && pb - bandTop < 470 && w > 1.5 * (pb - bandTop);
+    // On a phone the story keeps its body text unless that would shrink the robot too far.
+    if (arrange(side) < 0.82 && small && !side) arrange(true);
+
+    // The detour pose really is outside the workspace: back and to the right, clear of the operator station.
+    DET.X = 1.1; DET.Y = 0.62; DET.Z = 0.30;
+    for (let i = 0; i < 60; i++) {
+      const W1 = wristFor(P3(DET)).W1;
+      if (Math.hypot(W1.x - S0.x, W1.y - S0.y) > REACH * 1.1) break;
+      if (P3(DET).x < SR - 90 * S) DET.X += 0.04;
+      else if (W1.y > top0 + 24) DET.Z += 0.04;
+      else break;
+    }
+
+    // DOM readouts pinned to the cell: the wearable sits with the operator's controller, or up on the wall
+    // when the plate leaves no room beside it. The controller's long label shortens for the same reason.
+    const bx = deviceBox();
+    const edgeAt = y => O.x + U + V.x * clamp((T - y) / -V.y, 0, 0.6);     // the plate's right edge at height y
+    ctx.font = `600 10px ${MONO}`;
+    longLabel = !small && bx.x + bx.w - ctx.measureText(PAD_LABEL).width > edgeAt(bx.y - 14) + 12;
+    if (small) { vitalsEl.style.display = 'none'; hintEl.style.display = 'none'; }
+    else {
+      vitalsEl.style.display = '';
+      vitalsEl.style.right = Math.round(w - (bx.x + bx.w)) + 'px';
+      let vt = Math.round(bx.y - 58);
+      pillUp = bx.x + bx.w - vitalsEl.offsetWidth < edgeAt(vt + vitalsEl.offsetHeight) + 10;
+      if (pillUp) vt = top0 + 6;
+      vitalsEl.style.top = vt + 'px';
+      hintEl.style.display = '';
+      hintEl.style.left = Math.round(SX + SW * 0.62) + 'px';
+      hintEl.style.top = Math.round(top0 + 96) + 'px';
+    }
+    // The finale card sits over the scene, clear of the story text and the signal panel. It tightens on short
+    // screens. On phones, where the scene is too shallow for it, it covers the band below the story instead,
+    // and where even that is too short it stays hidden.
+    summaryEl.classList.remove('tight', 'fill', 'gone');
+    summaryEl.style.height = '';
+    const sTop = Math.round(small ? top0 - 4 : top0 + 4);
+    if (small) {
+      const span = SR - RX, cw = Math.min(span - 32, 460);
+      summaryEl.style.right = 'auto';
+      summaryEl.style.left = Math.round(RX + (span - cw) / 2) + 'px';
+      summaryEl.style.width = cw + 'px';
+    } else {
+      summaryEl.style.left = 'auto';
+      summaryEl.style.right = Math.round(w - (bx.x + bx.w)) + 'px';
+      summaryEl.style.width = Math.round(Math.min(420, Math.max(340, SW * 0.5))) + 'px';
+    }
+    summaryEl.style.top = sTop + 'px';
+    const room = pt - 12 - sTop;
+    if (summaryEl.offsetHeight > room) summaryEl.classList.add('tight');
+    if (small && summaryEl.offsetHeight > room) {
+      const full = Math.round(pb - 10 - sTop);
+      summaryEl.classList.remove('tight');
+      if (summaryEl.offsetHeight > full) summaryEl.classList.add('tight');
+      summaryEl.classList.add('fill');
+      summaryEl.style.height = full + 'px';
+      if (summaryEl.scrollHeight > summaryEl.clientHeight + 2) summaryEl.classList.add('gone');
+    }
+    hatch = makeHatch();
+    renderStatic();
+    draw(shown, clock());
+  }
+
+  function progress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    return max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
+  }
+
+  // ======================= Drawing helpers =======================
+  function rr(x, y, ww, hh, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + ww, y, x + ww, y + hh, r);
+    ctx.arcTo(x + ww, y + hh, x, y + hh, r);
+    ctx.arcTo(x, y + hh, x, y, r);
+    ctx.arcTo(x, y, x + ww, y, r);
+    ctx.closePath();
+  }
+  function linkPath(a, b, w1, w2) {
+    const ddx = b.x - a.x, ddy = b.y - a.y, L = Math.hypot(ddx, ddy) || 1;
+    const nx = -ddy / L, ny = ddx / L;
+    ctx.beginPath();
+    ctx.moveTo(a.x + nx * w1 / 2, a.y + ny * w1 / 2);
+    ctx.lineTo(b.x + nx * w2 / 2, b.y + ny * w2 / 2);
+    ctx.lineTo(b.x - nx * w2 / 2, b.y - ny * w2 / 2);
+    ctx.lineTo(a.x - nx * w1 / 2, a.y - ny * w1 / 2);
+    ctx.closePath();
+  }
+  function metalLink(a, b, w1, w2) {
+    const ddx = b.x - a.x, ddy = b.y - a.y, L = Math.hypot(ddx, ddy) || 1;
+    const nx = -ddy / L, ny = ddx / L;
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, half = (w1 + w2) / 4 + 1;
+    const g = ctx.createLinearGradient(mx + nx * half, my + ny * half, mx - nx * half, my - ny * half);
+    g.addColorStop(0, '#f7f9fa'); g.addColorStop(0.38, '#c2c8ce'); g.addColorStop(0.72, '#6b7178'); g.addColorStop(1, '#33373c');
+    linkPath(a, b, w1, w2);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = 'rgba(10,12,14,0.55)'; ctx.lineWidth = 0.9; ctx.stroke();
+  }
+  function jointCap(j, r, ring) {
+    const g = ctx.createRadialGradient(j.x - r * 0.35, j.y - r * 0.35, r * 0.1, j.x, j.y, r);
+    g.addColorStop(0, '#5d636a'); g.addColorStop(0.6, '#2c3035'); g.addColorStop(1, '#16191c');
+    ctx.beginPath(); ctx.arc(j.x, j.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath(); ctx.arc(j.x, j.y, r * 0.62, 0, Math.PI * 2);
+    ctx.strokeStyle = ring; ctx.lineWidth = Math.max(1.4, r * 0.18); ctx.stroke();
+    ctx.beginPath(); ctx.arc(j.x - r * 0.3, j.y - r * 0.3, r * 0.18, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
+  }
+  function sphere(s, r, a) {
+    const g = ctx.createRadialGradient(s.x - r * 0.35, s.y - r * 0.35, r * 0.1, s.x, s.y, r);
+    g.addColorStop(0, `rgba(255,196,180,${a})`); g.addColorStop(0.5, `rgba(226,58,40,${a})`); g.addColorStop(1, `rgba(110,18,10,${a})`);
+    ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
+  }
+  // small solid label for in-scene callouts, so they stay legible over hoops and glare
+  function tag(text, x, y, bg, fg) {
+    ctx.font = `600 10px ${MONO}`;
+    const tw = ctx.measureText(text).width;
+    const xx = Math.min(x, SR - tw - 18);
+    ctx.fillStyle = bg; ctx.fillRect(xx - 4, y - 11, tw + 8, 15);
+    ctx.fillStyle = fg; ctx.fillText(text, xx, y);
+  }
+  // the system speaks to the operator: a speech bubble whose tail points at the controller
+  function bubble(text, col, txtCol, rightX, bottomY) {
+    ctx.font = `600 ${small ? 10.5 : 12}px ${MONO}`;
+    const tw = ctx.measureText(text).width, bw = tw + 24, bh = small ? 24 : 28;
+    const x = rightX - bw, y = bottomY - bh;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 4;
+    ctx.fillStyle = col;
+    rr(x, y, bw, bh, 7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(rightX - 42, y + bh - 1); ctx.lineTo(rightX - 28, y + bh + 10); ctx.lineTo(rightX - 26, y + bh - 1); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = txtCol; ctx.fillText(text, x + 12, y + bh / 2 + 4);
+  }
+
+  // Welding tool: dark body narrowing to a copper point.
+  function torch(Hs, tip, ghost) {
+    const ddx = tip.x - Hs.x, ddy = tip.y - Hs.y, L = Math.hypot(ddx, ddy) || 1;
+    const ux = ddx / L, uy = ddy / L, nx = -uy, ny = ux;
+    const neck = { x: tip.x - ux * 12 * S, y: tip.y - uy * 12 * S };
+    linkPath(Hs, neck, 15 * S, 6 * S);
+    if (ghost) {
+      ctx.fillStyle = 'rgba(214,204,255,0.78)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(124,58,237,0.85)'; ctx.lineWidth = 1; ctx.stroke();
+    } else {
+      ctx.fillStyle = '#22262a'; ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 0.8; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(Hs.x + nx * 4 * S, Hs.y + ny * 4 * S); ctx.lineTo(neck.x + nx * 1.5 * S, neck.y + ny * 1.5 * S);
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.4; ctx.stroke();
+    }
+    const nw = 5 * S;
+    ctx.beginPath(); ctx.moveTo(neck.x + nx * nw, neck.y + ny * nw); ctx.lineTo(tip.x, tip.y); ctx.lineTo(neck.x - nx * nw, neck.y - ny * nw); ctx.closePath();
+    if (ghost) { ctx.fillStyle = 'rgba(214,204,255,0.9)'; ctx.fill(); ctx.strokeStyle = 'rgba(124,58,237,0.85)'; ctx.lineWidth = 1; ctx.stroke(); }
+    else {
+      const ng = ctx.createLinearGradient(neck.x + nx * nw, neck.y + ny * nw, neck.x - nx * nw, neck.y - ny * nw);
+      ng.addColorStop(0, '#f4c795'); ng.addColorStop(0.55, '#b8702f'); ng.addColorStop(1, '#5e3311');
+      ctx.fillStyle = ng; ctx.fill();
+    }
+  }
+
+  const LINKS = ch => [[ch.B0, ch.S0, 36, 32], [ch.S0, ch.E, 25, 21], [ch.E, ch.W1, 20, 16], [ch.W1, ch.W2, 14, 14], [ch.W2, ch.W3, 14, 13], [ch.W3, ch.H, 12, 11]];
+  const JOINTS = ch => [[ch.S0, 18], [ch.E, 14], [ch.W1, 11], [ch.W2, 10], [ch.W3, 9]];
+
+  // Welding cable: leaves the torch, rides along the forearm and drops back to the base.
+  function drawCable(ch) {
+    const ux = ch.W1.x - ch.E.x, uy = ch.W1.y - ch.E.y, L = Math.hypot(ux, uy) || 1;
+    const nx = -uy / L * 9 * S, ny = ux / L * 9 * S;
+    const f1 = { x: lerp(ch.E.x, ch.W1.x, 0.78) + nx, y: lerp(ch.E.y, ch.W1.y, 0.78) + ny };
+    const f0 = { x: lerp(ch.E.x, ch.W1.x, 0.18) + nx, y: lerp(ch.E.y, ch.W1.y, 0.18) + ny };
+    const path = () => {
+      ctx.beginPath();
+      ctx.moveTo(ch.H.x + 5 * S, ch.H.y + 4 * S);
+      ctx.bezierCurveTo(ch.H.x + 26 * S, ch.H.y - 14 * S, f1.x + 18 * S, f1.y + 20 * S, f1.x, f1.y);
+      ctx.lineTo(f0.x, f0.y);
+      ctx.bezierCurveTo(f0.x - 24 * S, f0.y + 50 * S, ch.S0.x + 34 * S, ch.S0.y + 30 * S, ch.B0.x + 16 * S, ch.B0.y + 6 * S);
+    };
+    ctx.lineCap = 'round';
+    path(); ctx.strokeStyle = '#1b1e22'; ctx.lineWidth = 4.2 * S; ctx.stroke();
+    path(); ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1.1 * S; ctx.stroke();
+    ctx.lineCap = 'butt';
+  }
+
+  function drawArm(ch, ring, wristRing) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.26)'; ctx.shadowBlur = 16; ctx.shadowOffsetX = 12; ctx.shadowOffsetY = 14;
+    ctx.fillStyle = '#2a2e33';
+    LINKS(ch).forEach(([a, b, w1, w2]) => { linkPath(a, b, w1 * S, w2 * S); ctx.fill(); });
+    ctx.restore();
+    drawCable(ch);
+    rr(ch.B0.x - 30 * S, ch.B0.y - 6 * S, 60 * S, 14 * S, 4 * S);
+    ctx.fillStyle = '#2c3035'; ctx.fill();
+    LINKS(ch).forEach(([a, b, w1, w2]) => metalLink(a, b, w1 * S, w2 * S));
+    JOINTS(ch).forEach(([j, r], i) => jointCap(j, r * S, i >= 2 ? wristRing : ring));
+  }
+  // Ghost robot: a soft violet hologram of the arm the operator is placing.
+  function drawGhostArm(ch, alpha) {
+    const links = LINKS(ch).slice(1), joints = JOINTS(ch).slice(1);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = 'rgba(124,58,237,0.45)'; ctx.shadowBlur = 12;
+    links.forEach(([a, b, w1, w2]) => { linkPath(a, b, w1 * S * 0.92, w2 * S * 0.92); ctx.fillStyle = 'rgba(214,204,255,0.42)'; ctx.fill(); });
+    ctx.shadowBlur = 0;
+    links.forEach(([a, b, w1, w2]) => { linkPath(a, b, w1 * S * 0.92, w2 * S * 0.92); ctx.strokeStyle = 'rgba(124,58,237,0.7)'; ctx.lineWidth = 1; ctx.stroke(); });
+    joints.forEach(([j, r]) => {
+      ctx.beginPath(); ctx.arc(j.x, j.y, r * S * 0.8, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(232,226,255,0.75)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(124,58,237,0.85)'; ctx.lineWidth = 1.2; ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawBackdrop() {
+    ctx.fillStyle = C.paper2; ctx.fillRect(RX, 0, RW, h);
+    const g = ctx.createLinearGradient(0, 0, 0, pt);
+    g.addColorStop(0, C.paper); g.addColorStop(1, C.paper2);
+    ctx.fillStyle = g; ctx.fillRect(RX, 0, RW, pt);
+    const lamp = ctx.createRadialGradient(SX + SW * 0.48, top0 - 60, 10, SX + SW * 0.48, top0 - 60, Math.max(SW, pt) * 0.8);
+    lamp.addColorStop(0, 'rgba(255,255,255,0.42)'); lamp.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = lamp; ctx.fillRect(RX, 0, RW, pt);
+    const b = ctx.createLinearGradient(0, T, 0, pt);
+    b.addColorStop(0, '#adb3b9'); b.addColorStop(1, '#858c93');
+    ctx.fillStyle = b; ctx.fillRect(RX, T + 4, RW, pt - T - 4);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(RX, T + 4, RW, 1);
+    // riser under the robot, with a floor plate
+    const bw = 26 * S;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.25)'; ctx.shadowBlur = 18; ctx.shadowOffsetX = 10;
+    const pg = ctx.createLinearGradient(B0.x - bw, 0, B0.x + bw, 0);
+    pg.addColorStop(0, '#3f454b'); pg.addColorStop(0.45, '#6f767d'); pg.addColorStop(1, '#2f3439');
+    ctx.fillStyle = pg; ctx.fillRect(B0.x - bw, B0.y + 4 * S, bw * 2, pt - B0.y);
+    ctx.restore();
+    ctx.fillStyle = '#2a2e33';
+    ctx.fillRect(B0.x - bw - 6 * S, B0.y + 2 * S, bw * 2 + 12 * S, 6 * S);
+    ctx.fillRect(B0.x - bw - 10 * S, T + 4, bw * 2 + 20 * S, 7 * S);
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillRect(B0.x - bw * 0.55, B0.y + 10 * S, 2, pt - B0.y - 10 * S);
+  }
+  function drawVignette() {
+    const cx = SX + SW * 0.5, cy = (top0 + pt) / 2, r = Math.max(SW, pt - top0) * 0.85;
+    const g = ctx.createRadialGradient(cx, cy, r * 0.45, cx, cy, r);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.07)');
+    ctx.fillStyle = g; ctx.fillRect(RX, 0, RW, pt);
+  }
+  // hazard tape along the front of the bench
+  function drawTape() {
+    const y = pt - 7, th = 5;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(RX, y, RW, th); ctx.clip();
+    ctx.fillStyle = '#16181b'; ctx.fillRect(RX, y, RW, th);
+    ctx.fillStyle = '#ffc21a';
+    for (let x = RX - 16; x < RX + RW + 16; x += 14) {
+      ctx.beginPath(); ctx.moveTo(x, y + th); ctx.lineTo(x + 7, y + th); ctx.lineTo(x + 7 + th, y); ctx.lineTo(x + th, y); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+  // Everything that never moves is painted once per layout into an offscreen layer.
+  function renderStatic() {
+    layer.width = cvs.width; layer.height = cvs.height;
+    ctx = layer.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, -RX * dpr, 0);
+    ctx.clearRect(RX, 0, RW, h);
+    drawBackdrop(); drawVignette();
+    // fine grain over the wall, fixed per pixel so it never shimmers
+    if (grain) { ctx.save(); ctx.globalAlpha = 0.06; ctx.fillStyle = grain; ctx.fillRect(RX, 0, RW, pt); ctx.restore(); }
+    drawPlate(); drawTape();
+    ctx = mainCtx;
+  }
+  const grain = (() => {
+    const t = document.createElement('canvas'); t.width = t.height = 96;
+    const g = t.getContext('2d'), img = g.createImageData(96, 96);
+    for (let i = 0; i < 96 * 96; i++) { const v = Math.round(hash(i * 0.731 + 3.1) * 255); img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = v; img.data[i * 4 + 3] = 255; }
+    g.putImageData(img, 0, 0);
+    return mainCtx.createPattern(t, 'repeat');
+  })();
+  // diagonal hazard hatching marks the proposed part of the timeline
+  let hatch = null;
+  function makeHatch() {
+    const t = document.createElement('canvas'); t.width = t.height = 12;
+    const g = t.getContext('2d');
+    g.strokeStyle = 'rgba(255,194,26,0.9)'; g.lineWidth = 3;
+    [[-3, 15, 15, -3], [9, 15, 15, 9], [-3, 3, 3, -3]].forEach(([a, b, c, d]) => { g.beginPath(); g.moveTo(a, b); g.lineTo(c, d); g.stroke(); });
+    return mainCtx.createPattern(t, 'repeat');
+  }
+
+  function drawPlate() {
+    const a = P(0, 0, 0), b = P(1, 0, 0), c2 = P(1, 0.6, 0), d = P(0, 0.6, 0);
+    const th = 16 * S;
+    const top = () => { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(d.x, d.y); ctx.closePath(); };
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 14;
+    top(); ctx.fillStyle = '#6f767d'; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.lineTo(b.x, b.y + th); ctx.lineTo(a.x, a.y + th); ctx.closePath();
+    ctx.fillStyle = '#6c737a'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(c2.x, c2.y + th); ctx.lineTo(b.x, b.y + th); ctx.closePath();
+    ctx.fillStyle = '#545b62'; ctx.fill();
+    const g = ctx.createLinearGradient(d.x, d.y, b.x, b.y);
+    g.addColorStop(0, '#c4c9ce'); g.addColorStop(0.45, '#eef1f3'); g.addColorStop(0.62, '#d3d8dc'); g.addColorStop(1, '#a6adb3');
+    top(); ctx.fillStyle = g; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
+    for (let y = 0.006; y < 0.6; y += 0.011) { const s = P(0, y, 0), e = P(1, y, 0); ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(e.x, e.y); ctx.stroke(); }
+    ctx.restore();
+    top(); ctx.strokeStyle = 'rgba(20,22,25,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath(); ctx.moveTo(a.x, a.y + 0.5); ctx.lineTo(b.x, b.y + 0.5); ctx.stroke();
+  }
+
+  function ringPts(hp, from, to) {
+    const out = [];
+    for (let i = 0; i <= 28; i++) {
+      const ph = from + (to - from) * i / 28;
+      out.push(P(hp.X + R_HOOP * Math.cos(ph), hp.Y + R_HOOP * Math.sin(ph), Z_RING + hp.tilt * R_HOOP * Math.sin(ph)));
+    }
+    return out;
+  }
+  // A hoop is a tilted steel ring held on a footed post, drawn as a tube with a highlight.
+  function strokeRing(pts, active) {
+    const line = () => { ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y))); };
+    ctx.lineCap = 'round';
+    line(); ctx.strokeStyle = 'rgba(15,17,19,0.9)'; ctx.lineWidth = (active ? 6.6 : 5) * S; ctx.stroke();
+    line(); ctx.strokeStyle = active ? C.hazard : '#aab2ba'; ctx.lineWidth = (active ? 3.8 : 2.8) * S; ctx.stroke();
+    ctx.save(); ctx.translate(-0.4 * S, -0.9 * S);
+    line(); ctx.strokeStyle = active ? 'rgba(255,248,214,0.85)' : 'rgba(255,255,255,0.7)'; ctx.lineWidth = 0.9 * S; ctx.stroke();
+    ctx.restore();
+    ctx.lineCap = 'butt';
+  }
+  function drawHoopBack(hp, active, idx, done) {
+    const s = P(hp.X + 0.035, hp.Y - 0.035, 0);
+    const rx = R_HOOP * U * 1.15, ry = R_HOOP * Math.abs(V.y) * 0.9;
+    ctx.save();
+    ctx.translate(s.x, s.y); ctx.scale(1, ry / rx);
+    const sg = ctx.createRadialGradient(0, 0, rx * 0.2, 0, 0, rx);
+    sg.addColorStop(0, 'rgba(0,0,0,0.12)'); sg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(0, 0, rx, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    const p0 = P(hp.X + R_HOOP, hp.Y, 0), p1 = P(hp.X + R_HOOP, hp.Y, Z_RING);
+    ctx.beginPath(); ctx.ellipse(p0.x, p0.y, 5.5 * S, 2.6 * S, 0, 0, Math.PI * 2); ctx.fillStyle = '#2b2f34'; ctx.fill();
+    ctx.strokeStyle = '#2b2f34'; ctx.lineWidth = 3.4 * S;
+    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1 * S;
+    ctx.beginPath(); ctx.moveTo(p0.x - 0.8 * S, p0.y - 1); ctx.lineTo(p1.x - 0.8 * S, p1.y + 2); ctx.stroke();
+    // hoop number, with a tick once it is welded
+    ctx.font = `600 ${small ? 8.5 : 10}px ${MONO}`;
+    ctx.fillStyle = active ? '#121314' : 'rgba(18,19,20,0.5)';
+    const nx = p0.x + 7 * S, ny = p0.y + 4 * S;
+    ctx.fillText(String(idx + 1), nx, ny);
+    if (done) {
+      const tx = nx + 9 * S, ty = ny - 3 * S;
+      ctx.strokeStyle = '#121314'; ctx.lineWidth = 1.6 * S; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx + 2.5 * S, ty + 2.5 * S); ctx.lineTo(tx + 7 * S, ty - 3.5 * S); ctx.stroke();
+      ctx.lineCap = 'butt';
+    }
+    strokeRing(ringPts(hp, 0, Math.PI), active);
+  }
+  const drawHoopFront = (hp, active) => strokeRing(ringPts(hp, Math.PI, 2 * Math.PI), active);
+
+  // Weld nugget, glowing while hot and cooling through temper colours.
+  function weldMark(q, bad, heat) {
+    const s = P(q.X, q.Y, 0);
+    if (heat > 0.02) {
+      const r = 18 * S;
+      const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r);
+      g.addColorStop(0, `rgba(255,170,70,${0.75 * heat})`); g.addColorStop(0.4, `rgba(214,120,40,${0.35 * heat})`); g.addColorStop(1, 'rgba(120,80,160,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.beginPath(); ctx.ellipse(s.x, s.y, 6.5 * S, 3.6 * S, 0, 0, Math.PI * 2);
+    ctx.fillStyle = bad ? '#5a2620' : (heat > 0.3 ? `rgb(${Math.round(lerp(58, 255, heat))},${Math.round(lerp(63, 150, heat))},${Math.round(lerp(69, 60, heat))})` : '#3a3f45');
+    ctx.fill();
+    ctx.beginPath(); ctx.ellipse(s.x - 1, s.y - 1.2, 3 * S, 1.3 * S, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
+    if (bad) { ctx.strokeStyle = C.red; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.ellipse(s.x, s.y, 11 * S, 6 * S, 0, 0, Math.PI * 2); ctx.stroke(); }
+  }
+  function drawSmoke(s, time, amount) {
+    for (let i = 0; i < 6; i++) {
+      const u = (time * 0.32 + i / 6) % 1;
+      const x = s.x + Math.sin(u * 5 + i * 1.7) * 7 * S + u * 14 * S;
+      const y = s.y - 6 * S - u * 70 * S;
+      const r = (4 + u * 16) * S;
+      ctx.fillStyle = `rgba(70,74,80,${0.11 * (1 - u) * amount})`;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  // Arc bloom and sparks on wall-clock time, so a paused weld still burns.
+  function drawArc(s, time) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const R = 46 * S;
+    const flick = 0.85 + 0.15 * Math.sin(time * 61) * Math.sin(time * 23);
+    const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, R);
+    g.addColorStop(0, `rgba(255,246,220,${0.95 * flick})`); g.addColorStop(0.25, 'rgba(255,186,90,0.55)'); g.addColorStop(1, 'rgba(255,120,30,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(s.x, s.y, R, 0, Math.PI * 2); ctx.fill();
+    for (let i = 0; i < 22; i++) {
+      const f = time * 1.7 + i / 22, u = f % 1, gen = Math.floor(f);
+      const seed = i * 13.7 + gen * 7.1;
+      const vx = (hash(seed) - 0.5) * 150 * S, vy = -(hash(seed + 3) * 95 + 30) * S;
+      const x = s.x + vx * u, y = s.y + vy * u + 250 * S * u * u;
+      const a = Math.pow(1 - u, 1.3);
+      ctx.strokeStyle = `rgba(255,214,140,${0.9 * a})`; ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - vx * 0.03, y - (vy + 500 * S * u) * 0.03); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawOverlay(kind) {
+    const o = OV[kind], y0 = small ? bandTop : 52, ww = SR - RX;
+    ctx.save();
+    ctx.globalAlpha = 0.10; ctx.fillStyle = o.col; ctx.fillRect(RX, y0, ww, pt - y0);
+    ctx.globalAlpha = 0.95; ctx.strokeStyle = o.col; ctx.lineWidth = 6; ctx.strokeRect(RX + 3, y0 + 3, ww - 6, pt - y0 - 6);
+    ctx.restore();
+  }
+
+  // Operator devices. Both buzz on warnings, as in the study.
+  function deviceBox() {
+    const k = clamp(ZM, 0.75, 1), dw = (small ? 96 : 150) * k, dh = (small ? 58 : 86) * k;
+    const right = small ? SR - 14 : Math.min(SR - 22, SX + SW + 40);   // beside the scene, even on very wide screens
+    return { x: right - dw, y: pt - 12 - dh, w: dw, h: dh };
+  }
+  function drawGamepad(bx, st, alpha, time, buzz, buzzCol) {
+    if (alpha <= 0.01) return;
+    const { cy, c } = st;
+    let gx = bx.x, gy = bx.y; const gw = bx.w, gh = bx.h;
+    if (buzz) { gx += Math.sin(time * 95) * 1.8; gy += Math.cos(time * 83) * 1.2; }
+    const seg = cy ? ghostSeg(cy, c) : null;
+    let stick = { x: 0, y: 0 }, trigL = false;
+    if (seg && seg.kind === 'xy') {
+      const a = P3(ghostAt(cy, Math.max(0, c - 0.004))), b = P3(ghostAt(cy, Math.min(1, c + 0.004)));
+      const vx = b.x - a.x, vy = b.y - a.y, m = Math.hypot(vx, vy);
+      if (m > 0.05) { const mag = clamp(m / 6, 0.35, 1); stick = { x: vx / m * mag, y: vy / m * mag }; }
+    }
+    if (seg && seg.kind === 'z') trigL = true;
+    const confirm = cy && c >= cy.commit[0] && c < cy.commit[1];
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.font = `600 10px ${MONO}`; ctx.fillStyle = C.ink; ctx.textAlign = 'right';
+    ctx.fillText(longLabel ? PAD_LABEL : 'GAMEPAD', bx.x + bx.w, bx.y - 10);
+    ctx.textAlign = 'left';
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 6;
+    ctx.fillStyle = '#1c1f23';
+    ctx.beginPath(); ctx.ellipse(gx + gw * 0.25, gy + gh * 0.60, gw * 0.21, gh * 0.40, -0.35, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(gx + gw * 0.75, gy + gh * 0.60, gw * 0.21, gh * 0.40, 0.35, 0, Math.PI * 2); ctx.fill();
+    rr(gx + gw * 0.12, gy + gh * 0.14, gw * 0.76, gh * 0.48, gh * 0.22); ctx.fill();
+    ctx.restore();
+    rr(gx + gw * 0.14, gy + gh * 0.02, gw * 0.2, gh * 0.12, 3); ctx.fillStyle = trigL ? C.hazard : '#2a2e33'; ctx.fill();
+    rr(gx + gw * 0.66, gy + gh * 0.02, gw * 0.2, gh * 0.12, 3); ctx.fillStyle = '#2a2e33'; ctx.fill();
+    const ls = { x: gx + gw * 0.27, y: gy + gh * 0.38 }, sr = gh * 0.15;
+    ctx.beginPath(); ctx.arc(ls.x, ls.y, sr, 0, Math.PI * 2); ctx.fillStyle = '#0c0e10'; ctx.fill();
+    const moving = Math.hypot(stick.x, stick.y) > 0.05;
+    ctx.beginPath(); ctx.arc(ls.x + stick.x * sr * 0.55, ls.y + stick.y * sr * 0.55, sr * 0.7, 0, Math.PI * 2);
+    ctx.fillStyle = moving ? C.hazard : '#dfe2e5'; ctx.fill();
+    const rs = { x: gx + gw * 0.62, y: gy + gh * 0.64 };
+    ctx.beginPath(); ctx.arc(rs.x, rs.y, sr * 0.9, 0, Math.PI * 2); ctx.fillStyle = '#0c0e10'; ctx.fill();
+    ctx.beginPath(); ctx.arc(rs.x, rs.y, sr * 0.6, 0, Math.PI * 2); ctx.fillStyle = '#3a3f45'; ctx.fill();
+    const dp = { x: gx + gw * 0.38, y: gy + gh * 0.64 }, dl = gh * 0.09;
+    ctx.fillStyle = '#3a3f45';
+    ctx.fillRect(dp.x - dl, dp.y - dl * 0.35, dl * 2, dl * 0.7); ctx.fillRect(dp.x - dl * 0.35, dp.y - dl, dl * 0.7, dl * 2);
+    const bc = { x: gx + gw * 0.76, y: gy + gh * 0.37 }, bo = gh * 0.11, br = gh * 0.058;
+    [[0, bo, confirm ? C.hazard : '#3a3f45'], [bo, 0, '#3a3f45'], [-bo, 0, '#3a3f45'], [0, -bo, '#3a3f45']].forEach(([dx, dy, col]) => {
+      ctx.beginPath(); ctx.arc(bc.x + dx, bc.y + dy, br, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+    });
+    if (buzz) {
+      ctx.strokeStyle = buzzCol; ctx.lineWidth = 2;
+      [8, 14].forEach(r0 => {
+        ctx.beginPath(); ctx.arc(gx - 4, gy + gh * 0.55, r0, Math.PI * 0.75, Math.PI * 1.25); ctx.stroke();
+        ctx.beginPath(); ctx.arc(gx + gw + 4, gy + gh * 0.55, r0, -Math.PI * 0.25, Math.PI * 0.25); ctx.stroke();
+      });
+    }
+    ctx.restore();
+  }
+  function drawVR(bx, st, alpha, time, buzz, buzzCol) {
+    if (alpha <= 0.01) return null;
+    const { cy, c } = st;
+    const seg = cy ? ghostSeg(cy, c) : null;
+    let mv = { x: 0, y: 0 };
+    if (seg && seg.kind === 'hand') {
+      const a = P3(ghostAt(cy, Math.max(0, c - 0.004))), b = P3(ghostAt(cy, Math.min(1, c + 0.004)));
+      mv = { x: clamp((b.x - a.x) / 8, -1, 1), y: clamp((b.y - a.y) / 8, -1, 1) };
+    }
+    const grip = !!(seg && seg.kind === 'hand') || (cy && cy.mode === 'C' && c >= cy.commit[0] && c < cy.commit[1]);
+    const trig = cy && c >= cy.commit[0] && c < cy.commit[1];
+    let cx = bx.x + bx.w * 0.62 + mv.x * 10 * S, cyy = bx.y + bx.h * 0.52 + mv.y * 8 * S;
+    if (buzz) { cx += Math.sin(time * 95) * 1.6; cyy += Math.cos(time * 83) * 1.2; }
+    const tilt = -0.5 + mv.x * 0.35;
+    const sc = (small ? 0.62 : 1) * clamp(ZM, 0.75, 1);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.font = `600 10px ${MONO}`; ctx.fillStyle = C.ink; ctx.textAlign = 'right';
+    ctx.fillText(longLabel ? VR_LABEL : 'VR', bx.x + bx.w, bx.y - 10);
+    ctx.textAlign = 'left';
+    const hx = bx.x + bx.w * 0.06, hy = bx.y + bx.h * 0.18, hw = 58 * sc, hh = 30 * sc;
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
+    rr(hx, hy, hw, hh, 10 * sc); ctx.fillStyle = '#1c1f23'; ctx.fill(); ctx.restore();
+    ctx.fillStyle = '#2f343a';
+    ctx.beginPath(); ctx.ellipse(hx + hw * 0.3, hy + hh * 0.55, hw * 0.14, hh * 0.22, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(hx + hw * 0.7, hy + hh * 0.55, hw * 0.14, hh * 0.22, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#2a2e33'; ctx.lineWidth = 3 * sc;
+    ctx.beginPath(); ctx.moveTo(hx + 4, hy + hh * 0.4); ctx.quadraticCurveTo(hx + hw / 2, hy - 16 * sc, hx + hw - 4, hy + hh * 0.4); ctx.stroke();
+    ctx.save();
+    ctx.translate(cx, cyy); ctx.rotate(tilt);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 6;
+    rr(-9 * sc, -4 * sc, 18 * sc, 48 * sc, 8 * sc); ctx.fillStyle = '#1c1f23'; ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.ellipse(0, -14 * sc, 22 * sc, 16 * sc, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = '#1c1f23'; ctx.lineWidth = 6 * sc; ctx.stroke();
+    rr(7 * sc, 10 * sc, 6 * sc, 14 * sc, 2); ctx.fillStyle = grip ? C.hazard : '#3a3f45'; ctx.fill();
+    rr(-13 * sc, 0, 6 * sc, 10 * sc, 2); ctx.fillStyle = trig ? C.lav : '#3a3f45'; ctx.fill();
+    ctx.restore();
+    if (buzz) {
+      ctx.strokeStyle = buzzCol; ctx.lineWidth = 2;
+      [10, 17].forEach(r0 => { ctx.beginPath(); ctx.arc(cx, cyy, r0 + 18 * sc, -0.6, 0.6); ctx.stroke(); });
+    }
+    ctx.restore();
+    return { x: cx + Math.sin(tilt) * 30 * sc, y: cyy - Math.cos(tilt) * 30 * sc };
+  }
+
+  function drawHUD(fields, bx) {
+    const x0 = B0.x + 40 * S, hh = 24, y = pt - (small ? 10 : 14) - hh;
+    const x1 = bx.x - 14;
+    if (x1 - x0 < 80) return;
+    ctx.font = `500 11px ${MONO}`;
+    const gap = 13, inner = 5;
+    const width = list => list.reduce((s, [k, v]) => s + (k ? ctx.measureText(k).width + inner : 0) + ctx.measureText(v).width + gap, 20);
+    let list = fields.slice();
+    for (const key of ['J4', 'J3', 'J2', 'DZ', 'WORK', 'TARGET', 'TIP']) { if (width(list) <= x1 - x0) break; list = list.filter(f => f[0] !== key); }
+    const ww = Math.min(width(list), x1 - x0);
+    rr(x0, y, ww, hh, 4); ctx.fillStyle = 'rgba(17,19,22,0.92)'; ctx.fill();
+    ctx.save(); rr(x0, y, ww, hh, 4); ctx.clip();
+    let x = x0 + 10;
+    list.forEach(([k, v]) => {
+      if (k) { ctx.fillStyle = '#8f969c'; ctx.fillText(k, x, y + 16); x += ctx.measureText(k).width + inner; }
+      ctx.fillStyle = k === 'DZ' && v !== '0' ? '#ff8a8d' : '#ffc21a'; ctx.fillText(v, x, y + 16); x += ctx.measureText(v).width + gap;
+    });
+    ctx.restore();
+  }
+
+  function drawPanel(p) {
+    const narrow = PW < 560, PB = PY + PH;
+    const x0 = PX + (narrow ? Math.round(PW * 0.34) : 178), x1 = PX + PW - (side ? 12 : 20);
+    const xOf = q => x0 + (x1 - x0) * q;
+    const rowH = (PH - 20) / 4;
+    const pB = pAt(3, 0), pC = pAt(GATE, 0);
+    ctx.fillStyle = C.paper2; ctx.fillRect(PX, PY, PW, PH);
+    ctx.fillStyle = 'rgba(124,58,237,0.08)'; ctx.fillRect(xOf(pB), PY, xOf(pC) - xOf(pB), PH);
+    ctx.fillStyle = 'rgba(255,194,26,0.07)'; ctx.fillRect(xOf(pC), PY, x1 - xOf(pC), PH);
+    if (hatch) { ctx.save(); ctx.globalAlpha = 0.3; ctx.fillStyle = hatch; ctx.fillRect(xOf(pC), PY + 1, x1 - xOf(pC), PH - 1); ctx.restore(); }
+    ctx.fillStyle = C.ink; ctx.fillRect(PX, PY, PW, 1.5);
+    if (side) ctx.fillRect(PX, PY, 1.5, PH);
+    ctx.font = `600 10px ${MONO}`; ctx.fillStyle = C.ink;
+    ctx.fillText(narrow ? 'A' : 'A · GAMEPAD', xOf(0) + 5, PY + 14);
+    ctx.fillText('B · VR', xOf(pB) + 5, PY + 14);
+    ctx.fillText(narrow ? 'C' : 'C · PROPOSED', xOf(pC) + 5, PY + 14);
+    ctx.fillStyle = C.mute;
+    ctx.fillText(ctx.measureText('μ = STUDY MEAN').width + 26 < x0 - PX ? 'μ = STUDY MEAN' : 'μ = MEAN', PX + 16, PY + 14);
+
+    const geom = i => { const top = PY + 20 + i * rowH, bot = top + rowH - 10; return { top, bot }; };
+    const yMap = (i, lo, hi) => { const { top, bot } = geom(i); return v => bot - clamp((v - lo) / (hi - lo), 0, 1) * (bot - top - 6); };
+    const baseline = i => {
+      const { bot } = geom(i);
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, bot + 0.5); ctx.lineTo(x1, bot + 0.5); ctx.stroke();
+    };
+    const series = (f, ym, col, lw, dash, from, to) => {
+      if (to <= from) return;
+      ctx.beginPath();
+      const n = Math.max(2, Math.round((to - from) * 420));
+      for (let s = 0; s <= n; s++) { const q = from + (to - from) * s / n; const x = xOf(q), y = ym(f(q)); s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.strokeStyle = col; ctx.lineWidth = lw; if (dash) ctx.setLineDash(dash); ctx.stroke(); ctx.setLineDash([]);
+    };
+    const ref = (ym, v, q0, q1, label) => {
+      const y = ym(v);
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1; ctx.setLineDash([1, 3]);
+      ctx.beginPath(); ctx.moveTo(xOf(q0) + 2, y); ctx.lineTo(xOf(q1) - 2, y); ctx.stroke(); ctx.setLineDash([]);
+      if (!narrow) { ctx.font = `500 9.5px ${MONO}`; ctx.fillStyle = C.mute; ctx.fillText(label, xOf(q1) - ctx.measureText(label).width - 4, y - 3); }
+    };
+    const valFont = `500 ${narrow ? 13 : 16}px ${MONO}`;
+    const label = (i, txt, val, col) => {
+      const { top } = geom(i);
+      ctx.font = `600 9.5px ${MONO}`; ctx.fillStyle = C.mute; ctx.fillText(txt, PX + 16, top + 11);
+      ctx.font = valFont; ctx.fillStyle = col; ctx.fillText(val, PX + 16, top + 30);
+    };
+    const dot = (ym, v, col) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(xOf(p), ym(v), 3.4, 0, Math.PI * 2); ctx.fill(); };
+
+    // 1. clearance (mm)
+    baseline(0);
+    const yc = yMap(0, 0, 700);
+    ref(yc, 440, 0, pB, 'μ 440'); ref(yc, 279, pB, pC, 'μ 279');
+    series(q => sample(SIG.clr, q), yc, C.ink, 1.6, null, 0, p);
+    dot(yc, sample(SIG.clr, p), C.ink);
+    label(0, 'CLEARANCE', `${Math.round(Math.min(999, sample(SIG.clr, p)))} mm`, C.ink);
+
+    // 2. heart-rate variability (RMSSD, ms)
+    baseline(1);
+    const yh = yMap(1, 60, 140);
+    ref(yh, 126, 0, pB, 'μ 126'); ref(yh, 90, pB, pC, 'μ 90');
+    series(q => sample(SIG.hrv, q), yh, C.amber, 2, null, 0, p);
+    dot(yh, sample(SIG.hrv, p), C.amber);
+    label(1, narrow ? 'HRV RMSSD' : 'HRV · RMSSD', `${Math.round(sample(SIG.hrv, p))} ms`, C.amber);
+
+    // 3. trust, by questionnaire after each condition (study means)
+    baseline(2);
+    const yt = yMap(2, 4.8, 6.2);
+    const got = TQ.filter(q => p >= pAt(q.k, 1) - 0.004);
+    if (!got.length && !narrow) { ctx.font = `500 10px ${MONO}`; ctx.fillStyle = C.mute; ctx.fillText('questionnaire after each condition', xOf(0) + 4, geom(2).top + 22); }
+    got.forEach((q, i) => {
+      const x = xOf(pAt(q.k, 1) - 0.004);
+      if (i > 0) {
+        const xp = xOf(pAt(got[i - 1].k, 1) - 0.004);
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.moveTo(xp, yt(got[i - 1].total)); ctx.lineTo(x, yt(q.total)); ctx.stroke();
+        ctx.strokeStyle = C.red; ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(xp, yt(got[i - 1].safety)); ctx.lineTo(x, yt(q.safety)); ctx.stroke(); ctx.setLineDash([]);
+        if (!narrow) {
+          ctx.font = `600 9.5px ${MONO}`; ctx.textAlign = 'right';
+          ctx.fillStyle = C.ink; ctx.fillText('total n.s.', x - 8, yt(q.total) - 6);
+          ctx.fillStyle = C.red; ctx.fillText('safety sig.', x - 8, yt(q.safety) + 13);
+          ctx.textAlign = 'left';
+        }
+      }
+      ctx.fillStyle = C.red; ctx.fillRect(x - 1, yt(q.safety) - 3, 6, 6);
+      ctx.fillStyle = C.ink; ctx.fillRect(x - 5, yt(q.total) - 3, 6, 6);
+    });
+    if (p >= pC && !narrow) { ctx.font = `italic 500 10px ${MONO}`; ctx.fillStyle = C.mute; ctx.fillText('not yet measured', xOf(pC) + 8, geom(2).bot - 4); }
+    const lastQ = got[got.length - 1];
+    label(2, narrow ? 'TRUST / SAFETY' : 'TRUST · TOTAL / SAFETY', lastQ ? `${lastQ.total.toFixed(2)} / ` : 'pending', lastQ ? C.ink : C.mute);
+    if (lastQ) {
+      ctx.font = valFont;
+      const tw = ctx.measureText(`${lastQ.total.toFixed(2)} / `).width;
+      ctx.fillStyle = C.red; ctx.fillText(lastQ.safety.toFixed(2), PX + 16 + tw, geom(2).top + 30);
+    }
+
+    // 4. speed limit: fixed until the proposed layer, then set from heart-rate variability
+    baseline(3);
+    const ys = yMap(3, 0.2, 1.05);
+    series(() => 1, ys, C.mute, 1.2, [2, 3], 0, Math.min(p, pC));
+    if (p > pC) series(speedAt, ys, C.ink, 2, null, pC, p);
+    dot(ys, speedAt(p), proposedOn(p) ? C.ink : C.mute);
+    label(3, narrow ? 'SPEED LIMIT' : 'SPEED LIMIT · PROPOSED', `${Math.round(speedAt(p) * 100)}%`, C.ink);
+
+    // hoop numbers along the time axis
+    ctx.font = `500 8.5px ${MONO}`; ctx.textAlign = 'center';
+    for (let j = 0; j < N; j++) {
+      ctx.fillStyle = p >= pAt(j, 0) ? C.ink : C.mute;
+      ctx.fillText(String(j + 1), xOf((pAt(j, 0) + pAt(j, 1)) / 2), PB - 2.5);
+    }
+    ctx.textAlign = 'left';
+
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xOf(p) + 0.5, PY + 18); ctx.lineTo(xOf(p) + 0.5, PB - 11); ctx.stroke();
+    if (PB < h) { ctx.fillStyle = C.ink; ctx.fillRect(PX, PB - 1, PW, 1); }
+  }
+
+  // ======================= Frame =======================
+  const relAng = (a, b, c) => {
+    let d = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(b.y - a.y, b.x - a.x);
+    while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+    return Math.round(d * 180 / Math.PI);
+  };
+  function heatOf(j, p) {
+    const cy = CYC[j];
+    if (j === COLLIDE) return 0;
+    const p0 = pAt(j, cy.weld[0]), p1 = pAt(j, cy.weld[1]);
+    if (p < p0) return 0;
+    if (p <= p1) return smooth((p - p0) / Math.max(1e-6, (p1 - p0) * 0.3));
+    return Math.exp(-(p - p1) / 0.014);
+  }
+
+  let summaryOn = false, barP = -1;
+  function draw(p, time) {
+    if (!w || !B0) return false;
+    const st = stateAt(p);
+    const { k, c, cy } = st;
+    const ov = overlayOf(st);
+    const done = doneAt(st);
+    let live = false;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(layer, RX, 0, RW, h);
+
+    // weld nuggets, hot ones glowing and smoking
+    const smokes = [];
+    CYC.forEach((q, j) => {
+      const welded = j < k || (j === k && c >= q.weld[0]) || k >= N;
+      if (!welded) return;
+      const heat = heatOf(j, p);
+      weldMark(P3w(q.target), j === COLLIDE, heat);
+      if (heat > 0.05) smokes.push([P3(P3w(q.target)), heat]);
+    });
+
+    const active = cy ? k : -1;
+    const order = HOOPS.map((q, j) => j).sort((a, b) => HOOPS[b].Y - HOOPS[a].Y);
+    order.forEach(j => drawHoopBack(HOOPS[j], j === active, j, j < done));
+    order.forEach(j => { if (j !== active) drawHoopFront(HOOPS[j], false); });
+
+    const tS = P3(st.tool);
+    // planned path from the robot to the confirmed ghost pose, marching once committed
+    if (cy) {
+      const gEnd = cy.ghost[cy.ghost.length - 1].c1;
+      if (c >= gEnd - 0.01 && c < cy.tool.c1) {
+        const from = c < cy.tool.c0 ? 0 : smoother((c - cy.tool.c0) / (cy.tool.c1 - cy.tool.c0));
+        ctx.strokeStyle = 'rgba(108,92,224,0.85)'; ctx.lineWidth = 1.7; ctx.setLineDash([1, 5]); ctx.lineCap = 'round';
+        ctx.lineDashOffset = reduceMotion ? 0 : -time * 18;
+        ctx.beginPath();
+        for (let s = 0; s <= 48; s++) { const q = P3(along(cy.tool.path, from + (1 - from) * s / 48)); s ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); }
+        ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0; ctx.lineCap = 'butt';
+        live = true;
+      }
+    }
+
+    // ghost robot (six pale links)
+    let gS = null, gAlpha = 0;
+    if (cy) {
+      const g0 = cy.ghost[0].c0;
+      const committing = c >= cy.commit[0] && c < cy.commit[1];
+      gAlpha = c < cy.tool.c1 ? clamp((c - g0) / 0.04, 0, 1) * (committing ? 0.85 : 0.6) : 0.6 * (1 - clamp((c - cy.tool.c1) / 0.05, 0, 1));
+      if (gAlpha > 0.01) {
+        gS = P3(st.ghost);
+        const gch = chain(gS);
+        drawGhostArm(gch, gAlpha);
+        ctx.save();
+        ctx.globalAlpha = gAlpha;
+        if (!gch.reachable) {
+          ctx.strokeStyle = C.red; ctx.lineWidth = 1.6; ctx.setLineDash([4, 4]);
+          ctx.beginPath(); ctx.moveTo(gch.H.x, gch.H.y); ctx.lineTo(gch.Ht.x, gch.Ht.y); ctx.stroke(); ctx.setLineDash([]);
+        }
+        if (st.ghost.Z < 0) { ctx.beginPath(); ctx.rect(0, 0, w, P(st.ghost.X, st.ghost.Y, 0).y); ctx.clip(); }
+        torch(gch.reachable ? gch.H : gch.Ht, gS, true);
+        sphere(gS, 5 * S, 0.85);
+        ctx.restore();
+        if (committing) {
+          const u = (c - cy.commit[0]) / (cy.commit[1] - cy.commit[0]);
+          ctx.strokeStyle = `rgba(124,58,237,${0.9 * (1 - u)})`; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(gS.x, gS.y, (7 + 30 * u) * S, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+    }
+
+    // real robot
+    const ch = chain(tS);
+    const autonomy = proposedOn(p);
+    drawArm(ch, autonomy ? C.hazard : '#8c939a', ov === 'purple' ? C.violet : (autonomy ? C.hazard : '#8c939a'));
+    ctx.save();
+    if (st.tool.Z < 0) { ctx.beginPath(); ctx.rect(0, 0, w, P(st.tool.X, st.tool.Y, 0).y); ctx.clip(); }
+    torch(ch.H, tS, false);
+    sphere(tS, 5 * S, 1);
+    ctx.restore();
+    if (cy) drawHoopFront(HOOPS[k], true);
+
+    // weld, contact, margin
+    if (cy && k !== COLLIDE && c >= cy.weld[0] && c < cy.weld[1]) {
+      drawArc(tS, time);
+      const f = (c - cy.weld[0]) / 0.025;
+      if (f < 1) { const y0 = small ? bandTop : 52; ctx.fillStyle = `rgba(255,244,214,${0.2 * (1 - f)})`; ctx.fillRect(RX, y0, SR - RX, pt - y0); }
+      live = true;
+    }
+    smokes.forEach(([s, heat]) => { drawSmoke(s, time, heat); live = true; });
+    if (cy && k === COLLIDE && c >= cy.tool.c1 - 0.02 && c < cy.lift[0] + 0.06) {
+      const s0 = P(st.tool.X, st.tool.Y, 0), pulse = 0.5 + 0.5 * Math.sin(time * 9);
+      ctx.strokeStyle = `rgba(229,72,77,${0.55 + 0.4 * pulse})`; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(s0.x, s0.y, (14 + 6 * pulse) * S, (8 + 3 * pulse) * S, 0, 0, Math.PI * 2); ctx.stroke();
+      tag('DANGER-ZONE ENTRY', s0.x + 18 * S, s0.y + 26 * S, C.red, '#fff');
+      live = true;
+    }
+    if (cy && k === GATE && c >= cy.tool.c0 - 0.02 && c < cy.lift[0] + 0.06) {
+      const rB = (16 + 40 * (1 - speedAt(p))) * S;
+      ctx.strokeStyle = C.hazard; ctx.lineWidth = 2.2; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.arc(tS.x, tS.y - 4, rB, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      tag('MARGIN · SPEED ' + Math.round(speedAt(p) * 100) + '%', tS.x + rB + 8, tS.y - 4, C.hazard, '#111');
+    }
+
+    if (ov) { drawOverlay(ov); live = true; }
+
+    // operator devices: the gamepad hands over to VR at the start of condition B
+    const bx = deviceBox();
+    const pB = pAt(3, 0);
+    const vrMix = smooth((p - (pB - 0.008)) / 0.016);
+    const buzz = !!ov && ov !== 'gate';
+    drawGamepad(bx, st, 1 - vrMix, time, buzz && vrMix < 0.5, ov ? OV[ov].col : C.ink);
+    const tipVR = drawVR(bx, st, vrMix, time, buzz && vrMix >= 0.5, ov ? OV[ov].col : C.ink);
+    if (tipVR && gS && gAlpha > 0.05 && vrMix > 0.5) {
+      ctx.save();
+      ctx.globalAlpha = gAlpha * vrMix;
+      ctx.strokeStyle = 'rgba(124,58,237,0.55)'; ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.moveTo(tipVR.x, tipVR.y); ctx.lineTo(gS.x, gS.y); ctx.stroke();
+      ctx.restore();
+    }
+
+    // live HUD on the bench, as in the study
+    const tgt = cy ? P3w(cy.target) : HOME;
+    const dmm = Math.round(Math.hypot(st.tool.X - tgt.X, st.tool.Y - tgt.Y, st.tool.Z - tgt.Z) * MM);
+    const temp = Math.round(25 + 315 * sample(SIG.temp, p));
+    const dz = (k > COLLIDE || (k === COLLIDE && c >= cy.tool.c1)) ? 1 : 0;
+    const fields = [['J2', `${relAng({ x: ch.S0.x - 10, y: ch.S0.y }, ch.S0, ch.E)}°`], ['J3', `${relAng(ch.S0, ch.E, ch.W1)}°`], ['J4', `${relAng(ch.E, ch.W1, ch.W2)}°`],
+      ['TARGET', cy ? `${dmm} mm` : '–'], ['WORK', `${Math.round(LEAN * 180 / Math.PI)}°`], ['TIP', `${temp}°C`], ['DZ', `${dz}`], ['', `${done}/8`]];
+    if (autonomy) fields.push(['SPEED', `${Math.round(speedAt(p) * 100)}%`]);
+    drawHUD(fields, bx);
+
+    // the system speaks to the operator: a voice cue above the controller
+    if (ov) bubble(OV[ov].say, OV[ov].col, OV[ov].txt, bx.x + bx.w, small || pillUp ? bx.y - 22 : bx.y - 68);
+
+    drawPanel(p);
+    const fin = p >= pAt(N, 0.3);
+    if (fin !== summaryOn) { summaryOn = fin; summaryEl.classList.toggle('on', fin); vitalsEl.classList.toggle('off', fin); }
+    if (Math.abs(p - barP) > 0.0004) { barP = p; barEl.style.transform = `scaleX(${p.toFixed(4)})`; }
+    updateOverlayDom(st, ov, p);
+    return live;
+  }
+
+  // ======================= Loop: eased scroll plus ambient effects =======================
+  let shown = 0, running = false, last = 0;
+  const t0 = performance.now();
+  const clock = () => (reduceMotion ? 0 : (performance.now() - t0) / 1000);
+  function frame(now) {
+    const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000)); last = now;
+    const target = progress();
+    shown = reduceMotion ? target : shown + (target - shown) * (1 - Math.exp(-dt / 0.12));
+    if (Math.abs(target - shown) < 1e-5) shown = target;
+    const live = draw(shown, clock());
+    if (!document.hidden && (shown !== target || (live && !reduceMotion))) requestAnimationFrame(frame);
+    else running = false;
+  }
+  function kick() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }
+  window.addEventListener('scroll', kick, { passive: true });
+  // resizes arrive in bursts while a window is dragged; lay out at most once per frame
+  let resizeQueued = false;
+  window.addEventListener('resize', () => {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(() => { resizeQueued = false; layout(); kick(); });
+  });
+  document.addEventListener('visibilitychange', kick);
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', () => { readColors(); renderStatic(); kick(); });
+  }
+  shown = progress();
+  layout();
+  kick();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layout(); kick(); });
+  // content that changes the page height (filters, the earlier-work list) shifts the timeline; keep it in step
+  document.addEventListener('toggle', kick, true);
+  window.__cellKick = kick;
+})();
+
+// ======================= Page interactions =======================
+(() => {
+  'use strict';
+  document.documentElement.classList.add('js');
+  // the highlight on "trust" sweeps in when the contact line arrives
+  const lit = document.querySelector('.contact-big a');
+  if (lit && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { lit.classList.add('lit'); io.disconnect(); } }), { threshold: 0.6 });
+    io.observe(lit);
+  } else if (lit) lit.classList.add('lit');
+  // highlight the section in view
+  const links = [...document.querySelectorAll('nav ul a')];
+  const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  if ('IntersectionObserver' in window) {
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        links.forEach(a => a.removeAttribute('aria-current'));
+        const a = byId.get(e.target.id);
+        if (a) a.setAttribute('aria-current', 'true');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    document.querySelectorAll('main section[id]').forEach(s => spy.observe(s));
+  }
+  // phone menu
+  const btn = document.querySelector('.menu-btn'), menu = document.getElementById('menu');
+  const setMenu = open => { btn.setAttribute('aria-expanded', String(open)); document.body.classList.toggle('menu-open', open); btn.textContent = open ? 'Close' : 'Menu'; };
+  btn.addEventListener('click', () => setMenu(btn.getAttribute('aria-expanded') !== 'true'));
+  menu.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  // publication filters
+  const fbtns = [...document.querySelectorAll('.filters button')];
+  fbtns.forEach(b => b.addEventListener('click', () => {
+    fbtns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    const f = b.dataset.f;
+    document.querySelectorAll('#pubs li').forEach(li => { li.hidden = !(f === 'all' || li.dataset.t === f); });
+    if (window.__cellKick) window.__cellKick();
+  }));
+  // copy email
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copied'; }
+    catch (err) { b.textContent = 'Press Ctrl+C'; const r = document.createRange(); r.selectNodeContents(b.previousElementSibling.querySelector('span')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    setTimeout(() => { b.textContent = 'Copy'; }, 1800);
+  }));
+  // print everything, including the earlier-work list
+  window.addEventListener('beforeprint', () => document.querySelectorAll('details').forEach(d => { d.open = true; }));
+})();
+</script>
+</body>
+</html>
